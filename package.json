@@ -13,7 +13,7 @@
         "clean": "turbo run clean && pnpm store prune"
     },
     "devDependencies": {
-        "turbo": "^1.13.0"
+        "turbo": "^2.8.9"
     },
     "packageManager": "pnpm@8.15.0",
     "engines": {
