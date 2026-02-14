@@ -1,0 +1,16 @@
+## OS
+.DS_Store
+.editorconfig
+.npmrc
+
+# Ignored suffix
+*.log
+*.md
+*.svg
+*.png
+*ignore
+
+## Built-files
+.cache
+.pnpm
+dist

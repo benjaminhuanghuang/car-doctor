@@ -1,0 +1,23 @@
+{
+    "name": "car-doctor",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Full stack monorepo for Car Doctor",
+    "scripts": {
+        "dev": "turbo run dev",
+        "dev:mobile": "turbo run dev --filter=mobile",
+        "build": "turbo run build",
+        "test": "turbo run test",
+        "lint": "turbo run lint",
+        "format": "prettier --write .",
+        "clean": "turbo run clean && pnpm store prune"
+    },
+    "devDependencies": {
+        "turbo": "^1.13.0"
+    },
+    "packageManager": "pnpm@8.15.0",
+    "engines": {
+        "node": ">=22.0.0",
+        "pnpm": ">=8.0.0"
+    }
+}

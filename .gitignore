@@ -1,0 +1,22 @@
+.DS_Store
+node_modules
+bundle.js
+bundle.js.*
+*.lock
+*-lock.js
+*-lock.json
+.env
+pnpm-lock.yaml
+coverage
+dist
+
+*storybook.log
+storybook-static
+**/generated/prisma
+
+
+# Testing
+coverage
+
+# Turbo
+.turbo
