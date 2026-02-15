@@ -1,29 +1,23 @@
 import { Box } from 'lucide-react';
 import { Button } from '../ui/button';
-import { NavLink } from 'react-router-dom';
-
+import { NavLink, useNavigate } from 'react-router-dom';
 import { ThemeToggle } from '../ThemeToggle';
+import { getItem } from '@/lib/localStorage';
 
 export default function Navbar() {
-  const isSignedIn = false; // Replace with actual authentication logic
-  const userName = 'John Doe'; // Replace with actual user name
+  const navigate = useNavigate();
+  const user = getItem<{ fullName: string; email: string }>('user');
+  const isSignedIn = !!user;
 
-  const handleAuthClick = async () => {
+  const handleAuthClick = () => {
     if (isSignedIn) {
-      try {
-        await signOut();
-      } catch (e) {
-        console.error(`Puter sign out failed: ${e}`);
-      }
-
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      navigate('/login');
       return;
     }
 
-    try {
-      await signIn();
-    } catch (e) {
-      console.error(`Puter sign in failed: ${e}`);
-    }
+    navigate('/login');
   };
 
   return (
@@ -49,7 +43,9 @@ export default function Navbar() {
         <div className="actions">
           {isSignedIn ? (
             <>
-              <span className="greeting">{userName ? `Hi, ${userName}` : 'Signed in'}</span>
+              <span className="greeting">
+                {user?.fullName ? `Hi, ${user.fullName}` : 'Signed in'}
+              </span>
 
               <Button size="sm" onClick={handleAuthClick} className="btn">
                 Log Out
@@ -61,9 +57,9 @@ export default function Navbar() {
                 Log In
               </Button>
 
-              <a href="#upload" className="cta">
+              <Button onClick={() => navigate('/register')} size="sm" className="cta">
                 Get Started
-              </a>
+              </Button>
             </>
           )}
           <ThemeToggle />

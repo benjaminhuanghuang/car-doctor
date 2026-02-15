@@ -4,6 +4,7 @@ import RootLayout from '@/components/layout/RootLayout';
 import Home from './pages/Home';
 import About from './pages/About';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import Community from './pages/Community';
 
 const router = createBrowserRouter([
@@ -20,10 +21,6 @@ const router = createBrowserRouter([
         element: <About />,
       },
       {
-        path: '/login',
-        element: <Login />,
-      },
-      {
         path: '/community',
         element: <Community />,
       },
@@ -32,6 +29,14 @@ const router = createBrowserRouter([
         element: <div>404</div>,
       },
     ],
+  },
+  {
+    path: '/login',
+    element: <Login />,
+  },
+  {
+    path: '/register',
+    element: <Register />,
   },
 ]);
 

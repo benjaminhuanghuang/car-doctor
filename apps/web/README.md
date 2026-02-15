@@ -14,5 +14,5 @@ pnpm i tailwindcss @tailwindcss/vite
 npx shadcn@latest init 
 npx shadcn@latest add button
 
-
+pnpm --filter car-doctor-web add react-hook-form @hookform/resolvers zod
 ```

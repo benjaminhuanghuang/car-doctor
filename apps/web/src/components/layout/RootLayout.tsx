@@ -1,32 +1,30 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
 import Loader from '../Loader';
 import Navbar from './Navbar';
-import Login from '../../pages/Login';
 import Footer from './Footer';
+import { getItem } from '@/lib/localStorage';
 
 const RootLayout = () => {
-  //   const { user, loading } = useSelector((state) => state.auth);
-
-  const user = { name: 'Test User' };
+  const token = getItem<string>('token');
+  const user = getItem<{ fullName: string; email: string }>('user');
   const loading = false;
+
   if (loading) {
     return <Loader />;
   }
 
+  if (!token || !user) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
-    <>
-      {user ? (
-        <div className="min-h-screen bg-background flex flex-col">
-          <Navbar />
-          <main className="flex-1 pt-16">
-            <Outlet />
-          </main>
-          <Footer />
-        </div>
-      ) : (
-        <Login />
-      )}
-    </>
+    <div className="min-h-screen bg-background flex flex-col">
+      <Navbar />
+      <main className="flex-1 pt-16">
+        <Outlet />
+      </main>
+      <Footer />
+    </div>
   );
 };
 
