@@ -10,7 +10,7 @@ import { useState } from 'react';
 const registerSchema = z
   .object({
     fullName: z.string().min(1, 'Full name is required'),
-    email: z.string().email('Invalid email address'),
+    email: z.email('Invalid email address'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
     confirmPassword: z.string(),
   })
@@ -52,7 +52,7 @@ const Register = () => {
         login(response.data.token, response.data.user);
         navigate('/');
       }
-    } catch (err) {
+    } catch {
       setError('Registration failed. Please try again.');
     }
   };
@@ -78,7 +78,7 @@ const Register = () => {
                 type="text"
                 {...register('fullName')}
                 className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
-                placeholder="John Doe"
+                placeholder=""
               />
               {errors.fullName && (
                 <p className="mt-1 text-sm text-red-500">{errors.fullName.message}</p>
@@ -94,7 +94,7 @@ const Register = () => {
                 type="email"
                 {...register('email')}
                 className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
-                placeholder="john@example.com"
+                placeholder=""
               />
               {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
             </div>
@@ -108,7 +108,7 @@ const Register = () => {
                 type="password"
                 {...register('password')}
                 className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
-                placeholder="••••••••"
+                placeholder=""
               />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
@@ -127,7 +127,7 @@ const Register = () => {
                 type="password"
                 {...register('confirmPassword')}
                 className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
-                placeholder="••••••••"
+                placeholder=""
               />
               {errors.confirmPassword && (
                 <p className="mt-1 text-sm text-red-500">{errors.confirmPassword.message}</p>

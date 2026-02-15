@@ -24,14 +24,15 @@ export default function Navbar() {
         <div className="left">
           <NavLink to="/" className="brand">
             <Box className="logo" />
-
             <span className="name">Car Doctor</span>
           </NavLink>
 
           <ul className="links">
-            <NavLink to="/cars" className={({ isActive }) => (isActive ? 'active' : '')}>
-              My Cars
-            </NavLink>
+            {isAuthenticated && (
+              <NavLink to="/cars" className={({ isActive }) => (isActive ? 'active' : '')}>
+                My Cars
+              </NavLink>
+            )}
             <NavLink to="/community" className={({ isActive }) => (isActive ? 'active' : '')}>
               Community
             </NavLink>
