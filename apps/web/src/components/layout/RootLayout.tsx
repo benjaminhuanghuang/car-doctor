@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import Loader from '../Loader';
 import Navbar from './Navbar';
 import Login from '../../pages/Login';
+import Footer from './Footer';
 
 const RootLayout = () => {
   //   const { user, loading } = useSelector((state) => state.auth);
@@ -20,6 +21,7 @@ const RootLayout = () => {
           <main className="mx-auto px-4 py-8">
             <Outlet />
           </main>
+          <Footer />
         </div>
       ) : (
         <Login />
