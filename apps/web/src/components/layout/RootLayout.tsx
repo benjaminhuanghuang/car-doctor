@@ -14,7 +14,7 @@ const RootLayout = () => {
   }
 
   return (
-    <div>
+    <>
       {user ? (
         <div className="min-h-screen bg-gray-50">
           <Navbar />
@@ -26,7 +26,7 @@ const RootLayout = () => {
       ) : (
         <Login />
       )}
-    </div>
+    </>
   );
 };
 

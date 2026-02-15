@@ -1,6 +1,6 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -122,5 +122,59 @@
   body {
     @apply bg-background text-foreground;
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .navbar {
+    @apply fixed top-0 w-full z-50 bg-background/90 backdrop-blur-sm border-b border-border;
+
+    .inner {
+      @apply max-w-7xl mx-auto px-6 h-16 flex items-center justify-between;
+
+      .left {
+        @apply flex items-center space-x-8;
+
+        .brand {
+          @apply flex items-center space-x-2 cursor-pointer;
+
+          .logo {
+            @apply w-6 h-6 text-foreground;
+          }
+
+          .name {
+            @apply text-xl font-serif font-bold text-foreground tracking-tight;
+          }
+        }
+
+        .links {
+          @apply hidden md:flex items-center space-x-6;
+
+          a {
+            @apply text-sm font-medium text-muted-foreground hover:text-foreground transition-colors;
+          }
+        }
+      }
+
+      .actions {
+        @apply flex items-center space-x-4;
+
+        .greeting {
+          @apply text-xs font-semibold uppercase tracking-wide text-muted-foreground;
+        }
+
+        .btn {
+          @apply rounded-md;
+        }
+
+        .login {
+          @apply text-xs font-bold uppercase tracking-wide text-foreground hover:text-primary transition-colors;
+        }
+
+        .cta {
+          @apply inline-flex items-center justify-center rounded-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed px-3 py-1.5 text-xs uppercase tracking-wide bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm;
+        }
+      }
+    }
   }
 }
