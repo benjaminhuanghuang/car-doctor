@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { authApi } from '@/lib/api';
-import { setItem } from '@/lib/localStorage';
+import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 
 const registerSchema = z
@@ -23,6 +23,7 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 const Register = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [error, setError] = useState('');
   const {
     register,
@@ -48,8 +49,7 @@ const Register = () => {
       }
 
       if (response.data) {
-        setItem('token', response.data.token);
-        setItem('user', response.data.user);
+        login(response.data.token, response.data.user);
         navigate('/');
       }
     } catch (err) {
