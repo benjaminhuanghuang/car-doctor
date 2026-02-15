@@ -2,18 +2,16 @@ import { Outlet, Navigate } from 'react-router-dom';
 import Loader from '../Loader';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import { getItem } from '@/lib/localStorage';
+import { useAuth } from '@/contexts/AuthContext';
 
 const RootLayout = () => {
-  const token = getItem<string>('token');
-  const user = getItem<{ fullName: string; email: string }>('user');
-  const loading = false;
+  const { isAuthenticated, isLoading } = useAuth();
 
-  if (loading) {
+  if (isLoading) {
     return <Loader />;
   }
 
-  if (!token || !user) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 

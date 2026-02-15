@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { authApi } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
@@ -18,6 +18,9 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [error, setError] = useState('');
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/';
+
   const {
     register,
     handleSubmit,
@@ -42,9 +45,10 @@ const Login = () => {
 
       if (response.data) {
         login(response.data.token, response.data.user);
-        navigate('/');
+        // Redirect to the page the user was trying to access before login
+        navigate(from, { replace: true });
       }
-    } catch (err) {
+    } catch {
       setError('Login failed. Please try again.');
     }
   };

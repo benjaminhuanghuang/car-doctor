@@ -2,17 +2,15 @@ import { Box } from 'lucide-react';
 import { Button } from '../ui/button';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { ThemeToggle } from '../ThemeToggle';
-import { getItem } from '@/lib/localStorage';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const user = getItem<{ fullName: string; email: string }>('user');
-  const isSignedIn = !!user;
+  const { user, isAuthenticated, logout } = useAuth();
 
   const handleAuthClick = () => {
-    if (isSignedIn) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+    if (isAuthenticated) {
+      logout();
       navigate('/login');
       return;
     }
@@ -31,6 +29,9 @@ export default function Navbar() {
           </NavLink>
 
           <ul className="links">
+            <NavLink to="/cars" className={({ isActive }) => (isActive ? 'active' : '')}>
+              My Cars
+            </NavLink>
             <NavLink to="/community" className={({ isActive }) => (isActive ? 'active' : '')}>
               Community
             </NavLink>
@@ -41,7 +42,7 @@ export default function Navbar() {
         </div>
 
         <div className="actions">
-          {isSignedIn ? (
+          {isAuthenticated ? (
             <>
               <span className="greeting">
                 {user?.fullName ? `Hi, ${user.fullName}` : 'Signed in'}
