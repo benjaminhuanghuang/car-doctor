@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "turbo run dev",
         "dev:mobile": "turbo run dev --filter=mobile",
+        "test:backend": "pnpm --filter @car-doctor/backend test",
         "build": "turbo run build",
         "test": "turbo run test",
         "lint": "turbo run lint",

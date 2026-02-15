@@ -1,6 +1,15 @@
-import mongoose from 'mongoose';
+import { Schema, model, HydratedDocument } from 'mongoose';
 
-const userSchema = new mongoose.Schema(
+interface IUser {
+  email: string;
+  fullName: string;
+  password: string;
+  profilePic?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+const userSchema = new Schema<IUser>(
   {
     email: {
       type: String,
@@ -23,7 +32,10 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }, // createdAt & updatedAt
 );
+// Create an index on the email field for faster lookups and to enforce uniqueness
+userSchema.index({ email: 1 }, { unique: true });
 
-const User = mongoose.model('User', userSchema);
+type UserDocument = HydratedDocument<IUser>;
+const User = model<IUser>('User', userSchema);
 
-export default User;
+export { User, type IUser, type UserDocument };
