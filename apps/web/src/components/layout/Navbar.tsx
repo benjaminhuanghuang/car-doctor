@@ -8,10 +8,11 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
 
+  // Login or Logout button click handler
   const handleAuthClick = () => {
     if (isAuthenticated) {
       logout();
-      navigate('/login');
+      navigate('/');
       return;
     }
 
