@@ -30,14 +30,19 @@ export default function Navbar() {
     <header className="navbar">
       <nav className="inner">
         <div className="left">
-          <div className="brand">
+          <NavLink to="/" className="brand">
             <Box className="logo" />
 
             <span className="name">Car Doctor</span>
-          </div>
+          </NavLink>
 
           <ul className="links">
-            <a href="#">Community</a>
+            <NavLink to="/community" className={({ isActive }) => (isActive ? 'active' : '')}>
+              Community
+            </NavLink>
+            <NavLink to="/about" className={({ isActive }) => (isActive ? 'active' : '')}>
+              About
+            </NavLink>
           </ul>
         </div>
 

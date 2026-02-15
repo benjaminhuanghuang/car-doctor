@@ -16,9 +16,9 @@ const RootLayout = () => {
   return (
     <>
       {user ? (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-background">
           <Navbar />
-          <main className="mx-auto px-4 py-8">
+          <main className="mx-auto px-4 py-8 pt-24 max-w-7xl">
             <Outlet />
           </main>
           <Footer />

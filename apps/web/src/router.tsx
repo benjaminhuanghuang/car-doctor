@@ -3,6 +3,8 @@ import RootLayout from '@/components/layout/RootLayout';
 // Pages
 import Home from './pages/Home';
 import About from './pages/About';
+import Login from './pages/Login';
+import Community from './pages/Community';
 
 const router = createBrowserRouter([
   {
@@ -16,6 +18,18 @@ const router = createBrowserRouter([
       {
         path: '/about',
         element: <About />,
+      },
+      {
+        path: '/login',
+        element: <Login />,
+      },
+      {
+        path: '/community',
+        element: <Community />,
+      },
+      {
+        path: '*',
+        element: <div>404</div>,
       },
     ],
   },

@@ -152,6 +152,10 @@
 
           a {
             @apply text-sm font-medium text-muted-foreground hover:text-foreground transition-colors;
+
+            &.active {
+              @apply text-foreground font-semibold;
+            }
           }
         }
       }
@@ -176,5 +180,9 @@
         }
       }
     }
+  }
+
+  .home {
+    @apply min-h-screen bg-background relative overflow-x-hidden text-foreground;
   }
 }
