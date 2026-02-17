@@ -1,13 +1,13 @@
 import { createBrowserRouter } from 'react-router-dom';
 import RootLayout from '@/components/layout/RootLayout';
-import ProtectedRoute from '@/components/layout/ProtectedRoute';
+import ProtectedRoute from '@/components/ProtectedRoute';
 // Pages
 import Home from './pages/Home';
 import About from './pages/About';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Community from './pages/Community';
 import CarList from './pages/CarList';
+import Profile from './pages/Profile';
 
 const router = createBrowserRouter([
   {
@@ -23,8 +23,8 @@ const router = createBrowserRouter([
         element: <About />,
       },
       {
-        path: '/community',
-        element: <Community />,
+        path: '/profile',
+        element: <Profile />,
       },
       {
         path: '/cars',

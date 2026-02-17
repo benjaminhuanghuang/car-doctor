@@ -1,7 +1,7 @@
 import { Box } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Button } from './ui/button';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { ThemeToggle } from '../ThemeToggle';
+import { ThemeToggle } from './ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function Navbar() {
@@ -34,9 +34,11 @@ export default function Navbar() {
                 My Cars
               </NavLink>
             )}
-            <NavLink to="/community" className={({ isActive }) => (isActive ? 'active' : '')}>
-              Community
-            </NavLink>
+            {isAuthenticated && (
+              <NavLink to="/profile" className={({ isActive }) => (isActive ? 'active' : '')}>
+                Profile
+              </NavLink>
+            )}
             <NavLink to="/about" className={({ isActive }) => (isActive ? 'active' : '')}>
               About
             </NavLink>

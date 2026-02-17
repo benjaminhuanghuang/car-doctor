@@ -2,11 +2,8 @@ import { Schema, model, HydratedDocument } from 'mongoose';
 
 interface IUser {
   email: string;
-  fullName: string;
   password: string;
   profilePic?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 const userSchema = new Schema<IUser>(
@@ -15,10 +12,6 @@ const userSchema = new Schema<IUser>(
       type: String,
       required: true,
       unique: true,
-    },
-    fullName: {
-      type: String,
-      required: true,
     },
     password: {
       type: String,
