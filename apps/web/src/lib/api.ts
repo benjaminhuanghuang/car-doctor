@@ -44,7 +44,6 @@ async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise
 
 // Auth API
 export interface RegisterData {
-  fullName: string;
   email: string;
   password: string;
 }

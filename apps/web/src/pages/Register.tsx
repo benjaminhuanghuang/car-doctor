@@ -9,7 +9,6 @@ import { useState } from 'react';
 
 const registerSchema = z
   .object({
-    fullName: z.string().min(1, 'Full name is required'),
     email: z.email('Invalid email address'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
     confirmPassword: z.string(),
@@ -38,7 +37,6 @@ const Register = () => {
 
     try {
       const response = await authApi.register({
-        fullName: data.fullName,
         email: data.email,
         password: data.password,
       });
@@ -69,22 +67,6 @@ const Register = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6">
           <div className="space-y-4">
-            <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-foreground mb-1">
-                Full Name
-              </label>
-              <input
-                id="fullName"
-                type="text"
-                {...register('fullName')}
-                className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
-                placeholder=""
-              />
-              {errors.fullName && (
-                <p className="mt-1 text-sm text-red-500">{errors.fullName.message}</p>
-              )}
-            </div>
-
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-foreground mb-1">
                 Email address
