@@ -86,14 +86,12 @@ export default fetchApi;
 // User API
 export const userApi = {
   getProfile: () =>
-    fetchApi<{ user: { id: string; email: string; fullName: string; profilePic?: string } }>(
-      '/user/profile',
-    ),
+    fetchApi<{ user: { id: string; email: string; profilePic?: string } }>('/user/profile'),
 
-  updateProfile: (data: { email?: string; fullName?: string; profilePic?: string }) =>
+  updateProfile: (data: { email?: string; profilePic?: string }) =>
     fetchApi<{
       message: string;
-      user: { id: string; email: string; fullName: string; profilePic?: string };
+      user: { id: string; email: string; profilePic?: string };
     }>('/user/profile', {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -103,5 +101,18 @@ export const userApi = {
     fetchApi<{ message: string }>('/user/password', {
       method: 'PUT',
       body: JSON.stringify(data),
+    }),
+};
+
+export const uploadApi = {
+  getCloudinarySignature: () =>
+    fetchApi<{ timestamp: number; signature: string }>('/cloudinary-signature', {
+      method: 'GET',
+    }),
+
+  deleteFile: (cloudinaryUrl: string) =>
+    fetchApi<{ message: string }>('/delete-file', {
+      method: 'DELETE',
+      body: JSON.stringify({ cloudinaryUrl }),
     }),
 };

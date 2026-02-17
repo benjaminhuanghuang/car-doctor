@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import { userApi } from '@/lib/api';
+import { uploadApi, userApi } from '@/lib/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { X } from 'lucide-react';
 import Loader from '@/components/Loader';
@@ -70,30 +70,32 @@ const Profile = () => {
       // remove it from cloudinary if it exists
       if (userProfile?.profilePic) {
         try {
-          await userApi.deleteProfilePic();
+          await uploadApi.deleteFile(userProfile.profilePic);
         } catch (err) {
           console.error('Failed to delete old profile picture', err);
         }
       }
       // upload the image to cloudinary and get the url
       try {
-        const dataUrl = await fileToDataUrl(imageFile);
+        const { signature, timestamp } = await uploadApi.getCloudinarySignature();
+        const { dataUrl } = await uploadApi.uploadFileToCloudinary({
+          file: imageFile,
+          signature,
+          timestamp,
+        });
+
         mutation.mutate({ profilePic: dataUrl });
         return;
       } catch (err) {
         console.error('Failed to read file', err);
       }
 
-      // save the new profile picture url to the server
-      mutation.mutate({ profilePic: imagePreviewUrl ?? undefined });
-
-      setImageFile(null);
       userProfile.profilePic = imagePreviewUrl; // Update originalProfilePic to the new value after saving
     } else {
       // If no new image is selected, it means the user removed the existing image
       if (userProfile?.profilePic) {
         try {
-          await userApi.deleteProfilePic();
+          await uploadApi.deleteFile(userProfile.profilePic);
           mutation.mutate({ profilePic: undefined });
         } catch (err) {
           console.error('Failed to delete profile picture', err);
