@@ -17,6 +17,14 @@ const schema = z
   });
 
 type FormSchema = z.infer<typeof schema>;
+type FieldError = {
+  field?: 'currentPassword' | 'newPassword' | 'confirmPassword';
+  message?: string;
+};
+// Union type for API errors
+type ChangePasswordError =
+  | { error: string } // global error
+  | { details: FieldError[] }; // field-specific errors
 
 const ChangePassword = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -28,7 +36,7 @@ const ChangePassword = () => {
   const mutation = useMutation({
     mutationFn: async (payload: { currentPassword: string; newPassword: string }) => {
       const res = await userApi.changePassword(payload);
-      if (res.error) throw res;
+      if (res.error || !res.data) throw res;
       return res.data;
     },
     onSuccess: (data) => {
@@ -36,23 +44,29 @@ const ChangePassword = () => {
       reset();
     },
     onError: (err: unknown) => {
-      // If the API returned validation details, set form errors per-field
-      if (
-        err &&
-        typeof err === 'object' &&
-        'details' in err &&
-        Array.isArray((err as any).details)
-      ) {
-        (err as any).details.forEach((d: any) => {
-          if (d && d.field) {
-            setError(d.field, { type: 'server', message: d.message ?? JSON.stringify(d) });
-          }
-        });
-        return;
+      // narrow to object first
+      if (err && typeof err === 'object') {
+        const e = err as Partial<ChangePasswordError> & Record<string, unknown>;
+
+        // Field errors
+        if ('details' in e && Array.isArray(e.details)) {
+          (e.details as Array<FieldError>).forEach((d) => {
+            if (d.field) {
+              setError(d.field, { type: 'server', message: d.message });
+            }
+          });
+          return;
+        }
+
+        // Global error
+        if ('error' in e && typeof e.error === 'string') {
+          setError('currentPassword', { type: 'manual', message: e.error });
+          return;
+        }
       }
 
-      const message = err instanceof Error ? err.message : 'Failed to change password';
-      setError('currentPassword', { type: 'manual', message });
+      // fallback
+      setError('currentPassword', { type: 'manual', message: 'Failed to change password' });
     },
   });
 
@@ -107,16 +121,18 @@ const ChangePassword = () => {
         <div>
           {successMessage && <span className="text-green-600">{successMessage}</span>}
           {mutation.isError && !formState.errors.currentPassword && (
-            <span className="text-red-600">{(mutation.error as any)?.error ?? 'Error'}</span>
+            <span className="text-red-600">
+              {(mutation.error as { error: string }).error ?? 'Error'}
+            </span>
           )}
         </div>
         <div className="flex items-center gap-3">
           <button
             type="submit"
-            disabled={mutation.isLoading}
+            disabled={mutation.isPending}
             className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
           >
-            {mutation.isLoading ? 'Saving...' : 'Change password'}
+            {mutation.isPending ? 'Saving...' : 'Change password'}
           </button>
         </div>
       </form>
