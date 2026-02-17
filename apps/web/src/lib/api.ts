@@ -10,13 +10,11 @@ interface ApiResponse<T> {
 async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
   const token = localStorage.getItem('token');
 
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json',
-    ...options.headers,
-  };
+  const headers = new Headers();
+  headers.append('Content-Type', 'application/json');
 
   if (token) {
-    headers['Authorization'] = `Bearer ${token?.replace(/"/g, '')}`;
+    headers.append('Authorization', `Bearer ${token?.replace(/"/g, '')}`);
   }
 
   try {
