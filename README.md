@@ -2,11 +2,13 @@
 
 ## Features and tech stacks
 
-- RESTful API + Mongoose + Zod validation + cloudinary(Image uploading)
+- Server: RESTful API + Mongoose + Zod validation
 
-- React + TanStack Query + AuthContext
+- Web client: React + TanStack Query + AuthContext
 
-- React Native + Expo
+- Mobile client: React Native + Expo
+
+- Image uploading: cloudinary
 
 ## Engineering
 

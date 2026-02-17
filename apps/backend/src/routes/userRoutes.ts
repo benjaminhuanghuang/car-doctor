@@ -1,32 +1,8 @@
 import { Router } from 'express';
 import { getProfile, updateProfile, changePassword } from '../controllers/userController';
 import { authenticateToken } from '../middleware/auth';
-import { validateBody } from '../middleware/validation';
-import { file, z } from 'zod';
-import multer from 'multer';
-import path from 'path';
-
-const fileFilter = (
-  _req: Express.Request,
-  file: Express.Multer.File,
-  cb: (error: Error | null, acceptFile?: boolean) => void,
-): void => {
-  const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-  if (allowedTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error('Invalid file type. Only JPEG, PNG, and JPG are allowed.'), false);
-  }
-};
-
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => cb(null, 'uploads/'),
-    filename: (req, file, cb) => cb(null, `${Date.now()}${path.extname(file.originalname)}`),
-  }),
-  fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-});
+import { validateBody, validateBody } from '../middleware/validation';
+import z from 'zod';
 
 const router: Router = Router();
 
@@ -34,10 +10,19 @@ const router: Router = Router();
 router.use(authenticateToken);
 
 // Validation schemas
-// The schema only needs to cover req.body fields — profilePic file comes from req.file via multer, not req.body
+// The profile images are stored in Cloudinary. Only save the url in DB
 const updateProfileSchema = z.object({
   email: z.email('Invalid email format').optional(),
-  fullName: z.string().max(100).optional(),
+  profilePic: z
+    .url('Profile picture must be a valid URL')
+    .max(100, 'Profile picture URL is too long')
+    // .refine((url) => url.startsWith('https://'), {
+    //   message: 'Profile picture must use HTTPS',
+    // })
+    .refine((url) => /\.(jpg|jpeg|png|webp|gif)$/i.test(url), {
+      message: 'Profile picture must be a valid image URL',
+    })
+    .optional(),
 });
 
 const changePasswordSchema = z.object({
@@ -47,12 +32,7 @@ const changePasswordSchema = z.object({
 
 // Routes
 router.get('/profile', getProfile);
-router.put(
-  '/profile',
-  upload.single('profilePic'),
-  validateBody(updateProfileSchema),
-  updateProfile,
-);
+router.put('/profile', validateBody(updateProfileSchema), updateProfile);
 router.put('/password', validateBody(changePasswordSchema), changePassword);
 
 export default router;
