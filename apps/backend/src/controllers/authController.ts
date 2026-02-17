@@ -4,16 +4,10 @@ import { z } from 'zod';
 import { User } from '../models/User';
 import { generateToken } from '../utils/jwt';
 
-const toPublicUser = (user: {
-  _id: unknown;
-  email: string;
-  fullName: string;
-  profilePic?: string;
-}) => {
+const toPublicUser = (user: { _id: unknown; email: string; profilePic?: string }) => {
   return {
     id: user._id,
     email: user.email,
-    fullName: user.fullName,
     profilePic: user.profilePic ?? '',
   };
 };
@@ -57,7 +51,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '12', 10);
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const user = await User.create({
-      fullName: resolvedFullName,
       email,
       password: hashedPassword,
     });
@@ -66,7 +59,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const token = await generateToken({
       id: user._id.toString(),
       email: user.email,
-      username: user.fullName,
     });
 
     res.status(201).json({
@@ -112,7 +104,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const token = await generateToken({
       id: user._id.toString(),
       email: user.email,
-      username: user.fullName,
     });
 
     res.json({

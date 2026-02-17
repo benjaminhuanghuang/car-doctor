@@ -7,7 +7,6 @@ dotenv.config();
 export interface JwtPayload extends JWTPayload {
   id: string;
   email: string;
-  username: string;
 }
 
 export const generateToken = async (payload: JwtPayload): Promise<string> => {

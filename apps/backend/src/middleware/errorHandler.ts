@@ -6,7 +6,12 @@ export interface CustomError extends Error {
   code?: string;
 }
 
-export const errorHandler = (err: CustomError, req: Request, res: Response, next: NextFunction) => {
+export const errorHandler = (
+  err: CustomError,
+  _req: Request,
+  res: Response,
+  _next: NextFunction,
+) => {
   console.error(err.stack);
 
   // Default error
@@ -45,7 +50,7 @@ export const errorHandler = (err: CustomError, req: Request, res: Response, next
   });
 };
 
-export const notFound = (req: Request, res: Response, next: NextFunction) => {
+export const notFound = (req: Request, _res: Response, next: NextFunction) => {
   const error = new Error(`Not found - ${req.originalUrl}`) as CustomError;
   error.status = 404;
   next(error);

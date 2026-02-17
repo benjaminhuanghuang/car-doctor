@@ -51,7 +51,6 @@ export const createCar = async (req: AuthenticatedRequest, res: Response): Promi
       brand,
       carModel,
       year,
-      licensePlate,
       color,
     });
 
