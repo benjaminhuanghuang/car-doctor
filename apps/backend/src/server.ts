@@ -7,7 +7,6 @@ import healthRouter from './routes/healthRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import carRoutes from './routes/carRoutes.js';
 import maintenanceRoutes from './routes/maintenanceRoutes.js';
-import uploadRoutes from './routes/uploadRoutes.js';
 // DB
 import { connectDB } from './config/database';
 
@@ -18,8 +17,8 @@ const port = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Allow larger JSON/urlencoded request bodies (5 megabytes)
+app.use(express.json({ limit: '5mb' }));
 
 // Routes
 app.use('/api/user', userRoutes);

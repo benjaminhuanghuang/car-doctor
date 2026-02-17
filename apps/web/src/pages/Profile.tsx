@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import { uploadApi, userApi } from '@/lib/api';
+import { userApi } from '@/lib/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { X } from 'lucide-react';
 import Loader from '@/components/Loader';
@@ -8,9 +8,8 @@ const Profile = () => {
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   // Local state for image preview and file handling
-  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [originalProfilePic, setOriginalProfilePic] = useState<string | null>(null);
   const [email, setEmail] = useState<string>('');
 
   const fetchProfile = async () => {
@@ -31,17 +30,16 @@ const Profile = () => {
 
   useEffect(() => {
     if (userProfile?.profilePic) {
-      setImagePreviewUrl(userProfile.profilePic);
+      setImagePreview(userProfile.profilePic);
     }
     setEmail(userProfile?.email || '');
-    setOriginalProfilePic(userProfile?.profilePic ?? null);
   }, [userProfile]);
 
   const isDirty = useMemo(() => {
-    const prev = originalProfilePic ?? null;
-    const current = imagePreviewUrl ?? null;
+    const current = imagePreview ?? null;
+    const prev = userProfile?.profilePic ?? null;
     return current !== prev;
-  }, [imagePreviewUrl, originalProfilePic]);
+  }, [imagePreview, userProfile?.profilePic]);
 
   const mutation = useMutation({
     mutationFn: async (updates: { profilePic?: string }) => {
@@ -51,7 +49,6 @@ const Profile = () => {
     },
     onSuccess: (updatedUser) => {
       queryClient.setQueryData(['profile'], updatedUser);
-      setOriginalProfilePic(updatedUser.profilePic ?? null);
     },
   });
 
@@ -60,6 +57,7 @@ const Profile = () => {
       const reader = new FileReader();
       reader.onload = () => resolve(String(reader.result));
       reader.onerror = reject;
+      // readAsDataURL() is not an async function
       reader.readAsDataURL(file);
     });
 
@@ -67,40 +65,13 @@ const Profile = () => {
     e.preventDefault();
     // If a new image file is selected
     if (imageFile) {
-      // remove it from cloudinary if it exists
-      if (userProfile?.profilePic) {
-        try {
-          await uploadApi.deleteFile(userProfile.profilePic);
-        } catch (err) {
-          console.error('Failed to delete old profile picture', err);
-        }
-      }
-      // upload the image to cloudinary and get the url
-      try {
-        const { signature, timestamp } = await uploadApi.getCloudinarySignature();
-        const { dataUrl } = await uploadApi.uploadFileToCloudinary({
-          file: imageFile,
-          signature,
-          timestamp,
-        });
-
-        mutation.mutate({ profilePic: dataUrl });
-        return;
-      } catch (err) {
-        console.error('Failed to read file', err);
-      }
-
-      userProfile.profilePic = imagePreviewUrl; // Update originalProfilePic to the new value after saving
+      const base64 = imagePreview.startsWith('blob:')
+        ? await fileToDataUrl(imageFile)
+        : imagePreview;
+      mutation.mutate({ profilePic: base64 });
+      return;
     } else {
-      // If no new image is selected, it means the user removed the existing image
-      if (userProfile?.profilePic) {
-        try {
-          await uploadApi.deleteFile(userProfile.profilePic);
-          mutation.mutate({ profilePic: undefined });
-        } catch (err) {
-          console.error('Failed to delete profile picture', err);
-        }
-      }
+      mutation.mutate({ profilePic: '' });
     }
   };
 
@@ -108,19 +79,20 @@ const Profile = () => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
 
-    if (imagePreviewUrl) {
-      URL.revokeObjectURL(imagePreviewUrl);
+    if (imagePreview && imagePreview.startsWith('blob:')) {
+      URL.revokeObjectURL(imagePreview);
     }
     setImageFile(file);
-    setImagePreviewUrl(URL.createObjectURL(file));
+    // Create a temporary URL for the selected file to show as preview
+    setImagePreview(URL.createObjectURL(file));
   }
 
   function removeImagePreview() {
-    if (imagePreviewUrl) {
-      URL.revokeObjectURL(imagePreviewUrl);
+    if (imagePreview && imagePreview.startsWith('blob:')) {
+      URL.revokeObjectURL(imagePreview);
     }
     setImageFile(null);
-    setImagePreviewUrl(null);
+    setImagePreview('');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -152,10 +124,10 @@ const Profile = () => {
                 if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click();
               }}
             >
-              {imagePreviewUrl ? (
+              {imagePreview ? (
                 <>
                   <img
-                    src={imagePreviewUrl}
+                    src={imagePreview}
                     alt="Preview"
                     className="w-24 h-24 object-cover rounded-full"
                   />
