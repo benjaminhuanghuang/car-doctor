@@ -87,20 +87,20 @@ export default fetchApi;
 export const userApi = {
   getProfile: () =>
     fetchApi<{ user: { id: string; email: string; fullName: string; profilePic?: string } }>(
-      '/users/profile',
+      '/user/profile',
     ),
 
   updateProfile: (data: { email?: string; fullName?: string; profilePic?: string }) =>
     fetchApi<{
       message: string;
       user: { id: string; email: string; fullName: string; profilePic?: string };
-    }>('/users/profile', {
+    }>('/user/profile', {
       method: 'PUT',
       body: JSON.stringify(data),
     }),
 
   changePassword: (data: { currentPassword: string; newPassword: string }) =>
-    fetchApi<{ message: string }>('/users/password', {
+    fetchApi<{ message: string }>('/user/password', {
       method: 'PUT',
       body: JSON.stringify(data),
     }),

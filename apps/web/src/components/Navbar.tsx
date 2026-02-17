@@ -56,9 +56,7 @@ export default function Navbar() {
         <div className="actions">
           {isAuthenticated ? (
             <>
-              <span className="greeting">
-                {user?.fullName ? `Hi, ${user.fullName}` : 'Signed in'}
-              </span>
+              <span>{`Hi, ${user?.email}`}</span>
 
               <Button size="sm" onClick={handleAuthClick} className="btn">
                 Log Out

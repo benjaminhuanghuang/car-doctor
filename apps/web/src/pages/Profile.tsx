@@ -20,7 +20,7 @@ const Profile = () => {
   };
 
   const {
-    data: profile,
+    data: userProfile,
     isLoading: isFetching,
     error: fetchError,
   } = useQuery({
@@ -28,6 +28,8 @@ const Profile = () => {
     queryFn: fetchProfile,
     enabled: true,
   });
+  const email = userProfile?.email;
+  const imagePreviewUrl = userProfile?.profilePic;
 
   const mutation = useMutation({
     mutationFn: async (updates: { profilePic?: string }) => {
@@ -37,9 +39,6 @@ const Profile = () => {
     },
     onSuccess: (updatedUser) => {
       queryClient.setQueryData(['profile'], updatedUser);
-      setImagePreview(null);
-      setImageFile(null);
-      setProfilePic(updatedUser.profilePic ?? null);
       if (token) {
         login(token, {
           id: updatedUser.id,
@@ -108,11 +107,11 @@ const Profile = () => {
               className="block"
               hidden
             />
-            {imagePreview ? (
+            {imagePreviewUrl ? (
               // preview image and the x button to remove it
               <div className="relative group">
                 <img
-                  src={imagePreview}
+                  src={imagePreviewUrl}
                   alt="Preview"
                   className="w-24 h-24 object-cover rounded-full"
                 />

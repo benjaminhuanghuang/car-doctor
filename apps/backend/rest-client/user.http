@@ -1,11 +1,11 @@
 @token = eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY5OTRhYTdjNmU3Y2M4ZTE1Mjc4OWIwZiIsImVtYWlsIjoiYWFhYUBnbWFpbC5jb20iLCJpYXQiOjE3NzEzNTA2NTYsImV4cCI6MTc3MTk1NTQ1Nn0.MnI2bmw7NQM2d-zMWvzh2bCUiwnyX4HYvNtv6SdAB84
 ###
-GET http://localhost:3001/api/users/profile
+GET http://localhost:3001/api/user/profile
 Authorization: Bearer {{token}}
 
 
 ###
-PUT http://localhost:3001/api/users/profile
+PUT http://localhost:3001/api/user/profile
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -15,7 +15,7 @@ Content-Type: application/json
 }
 
 ###
-PUT http://localhost:3001/api/users/profile-old
+PUT http://localhost:3001/api/user/profile-old
 Authorization: Bearer {{token}}
 Content-Type: multipart/form-data; boundary=----BoundaryString
 
