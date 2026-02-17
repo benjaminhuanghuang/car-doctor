@@ -52,7 +52,7 @@ export const createCar = async (req: AuthenticatedRequest, res: Response): Promi
       carModel,
       year,
       color,
-    });
+    } as any);
 
     res.status(201).json({
       message: 'Car created successfully',
