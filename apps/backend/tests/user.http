@@ -6,7 +6,15 @@ Authorization: Bearer {{token}}
 ###
 PUT http://localhost:3001/api/users/profile
 Authorization: Bearer {{token}}
-Content-Type: multipart/form-data
+Content-Type: multipart/form-data; boundary=----BoundaryString
 
-profilePic=@./flower.png
-email=John Doe
+------BoundaryString
+Content-Disposition: form-data; name="profilePic"; filename="flower.png"
+Content-Type: image/png
+
+< ./flower.png
+------BoundaryString
+Content-Disposition: form-data; name="email"
+
+aaaa@gmail.com
+------BoundaryString--

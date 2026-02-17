@@ -9,7 +9,7 @@ cloudinary.config({
 });
 
 // upload file to cloudinary and return the url and public_id
-export const uploadToCloudinary = async (filePath: string, folder = 'Doctor') => {
+export const uploadToCloudinary = async (filePath: string, folder = 'carDoctor') => {
   try {
     const result = await cloudinary.uploader.upload(filePath, {
       folder,

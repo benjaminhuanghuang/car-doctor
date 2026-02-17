@@ -51,13 +51,13 @@ export const getProfile = async (req: AuthenticatedRequest, res: Response): Prom
 export const updateProfile = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = getUserId(req);
-    const { email, fullName } = req.body as { email?: string; fullName?: string };
+    const { email } = req.body;
 
     // If a file was uploaded by multer, upload it to Cloudinary and use that URL
     let profilePicFromFile: string | undefined = undefined;
     const file = (req as any).file as Express.Multer.File | undefined;
     if (file) {
-      const uploadResult = await uploadToCloudinary(file.path, 'Doctor');
+      const uploadResult = await uploadToCloudinary(file.path, 'carDoctor');
       profilePicFromFile =
         (uploadResult && (uploadResult.secure_url || uploadResult.url)) || undefined;
     }
@@ -67,7 +67,8 @@ export const updateProfile = async (req: AuthenticatedRequest, res: Response) =>
       return;
     }
 
-    const updateData: any = { ...(email ? { email } : {}), ...(fullName ? { fullName } : {}) };
+    const updateData: { email?: string; profilePic?: string } = {};
+    if (email) updateData.email = email;
     if (profilePicFromFile) updateData.profilePic = profilePicFromFile;
 
     const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
