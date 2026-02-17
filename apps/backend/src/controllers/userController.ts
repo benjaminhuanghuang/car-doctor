@@ -55,8 +55,7 @@ export const updateProfile = async (req: AuthenticatedRequest, res: Response) =>
       email,
       profilePic,
     };
-    console.log('----- updateProfile userId:', userId);
-    console.log('----- updateProfile updateData:', updateData);
+
     const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
       new: true,
       runValidators: true,

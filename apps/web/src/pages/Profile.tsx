@@ -94,7 +94,7 @@ const Profile = () => {
 
   return (
     <div className="max-w-3xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Profile</h1>
+      <h1 className="text-2xl font-bold mb-4">User Profile</h1>
       <form onSubmit={handleSave} className="space-y-4">
         <div className="md:col-span-2">
           <label>Profile Image</label>

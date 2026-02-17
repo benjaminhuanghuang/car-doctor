@@ -15,6 +15,16 @@ Content-Type: application/json
 }
 
 ###
+PUT http://localhost:3001/api/user/password
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "currentPassword": "111111",
+  "newPassword": "111111"
+}
+
+###
 PUT http://localhost:3001/api/user/profile-old
 Authorization: Bearer {{token}}
 Content-Type: multipart/form-data; boundary=----BoundaryString
