@@ -11,7 +11,7 @@ Content-Type: application/json
 
 {
   "email": "aaaa@gmail.com",
-  "profilePic": "https://res.cloudinary.com/dzqvypb1u/image/upload/v1700000000/sample2.jpg"
+  "profilePic": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNgYGD4z0AEYBxVSF+FAP60AgHtqROlAAAAAElFTkSuQmCC"
 }
 
 ###
@@ -23,19 +23,3 @@ Content-Type: application/json
   "currentPassword": "111111",
   "newPassword": "111111"
 }
-
-###
-PUT http://localhost:3001/api/user/profile-old
-Authorization: Bearer {{token}}
-Content-Type: multipart/form-data; boundary=----BoundaryString
-
-------BoundaryString
-Content-Disposition: form-data; name="profilePic"; filename="flower.png"
-Content-Type: image/png
-
-< ./flower.png
-------BoundaryString
-Content-Disposition: form-data; name="email"
-
-aaaa@gmail.com
-------BoundaryString--

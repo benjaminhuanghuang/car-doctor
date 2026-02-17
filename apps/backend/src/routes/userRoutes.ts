@@ -4,6 +4,8 @@ import { authenticateToken } from '../middleware/auth';
 import { validateBody } from '../middleware/validation';
 import z from 'zod';
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
 const router: Router = Router();
 
 // Apply authentication to all routes
@@ -14,14 +16,27 @@ router.use(authenticateToken);
 const updateProfileSchema = z.object({
   email: z.email('Invalid email format').optional(),
   profilePic: z
-    .url('Profile picture must be a valid URL')
-    .max(100, 'Profile picture URL is too long')
-    // .refine((url) => url.startsWith('https://'), {
-    //   message: 'Profile picture must use HTTPS',
-    // })
-    .refine((url) => /\.(jpg|jpeg|png|webp|gif)$/i.test(url), {
-      message: 'Profile picture must be a valid image URL',
-    })
+    .string()
+    .refine(
+      (val) => {
+        return /^data:image\/(png|jpeg|jpg|webp|gif);base64,/.test(val);
+      },
+      {
+        message: 'Profile picture must be a valid base64 image',
+      },
+    )
+    .refine(
+      (val) => {
+        const base64Data = val.split(',')[1];
+        if (!base64Data) return false;
+
+        const buffer = Buffer.from(base64Data, 'base64');
+        return buffer.length <= MAX_FILE_SIZE;
+      },
+      {
+        message: 'Profile picture must be smaller than 5MB',
+      },
+    )
     .optional(),
 });
 

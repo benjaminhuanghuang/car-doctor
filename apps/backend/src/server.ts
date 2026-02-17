@@ -26,7 +26,6 @@ app.use('/api/user', userRoutes);
 app.use('/api/cars', carRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/upload', uploadRoutes);
 
 // Health check
 app.use('/api/health', healthRouter);
