@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { getProfile, updateProfile, changePassword } from '../controllers/userController';
 import { authenticateToken } from '../middleware/auth';
 import { validateBody } from '../middleware/validation';
-import { z } from 'zod';
+import { file, z } from 'zod';
 import multer from 'multer';
 import path from 'path';
 
@@ -34,7 +34,7 @@ const router: Router = Router();
 router.use(authenticateToken);
 
 // Validation schemas
-// For multipart/form-data we validate text fields here; files are handled by multer
+// The schema only needs to cover req.body fields — profilePic file comes from req.file via multer, not req.body
 const updateProfileSchema = z.object({
   email: z.email('Invalid email format').optional(),
   fullName: z.string().max(100).optional(),
@@ -50,7 +50,7 @@ router.get('/profile', getProfile);
 router.put(
   '/profile',
   upload.single('profilePic'),
-  // validateBody(updateProfileSchema),
+  validateBody(updateProfileSchema),
   updateProfile,
 );
 router.put('/password', validateBody(changePasswordSchema), changePassword);
