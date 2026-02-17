@@ -3,15 +3,15 @@ import { useAuth } from '@/contexts/AuthContext';
 import { userApi } from '@/lib/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { X } from 'lucide-react';
+import { email } from 'zod';
 
 const Profile = () => {
   const { user, token, login } = useAuth();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  // Local state for image preview and file handling
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [profilePic, setProfilePic] = useState<string | null>(user?.profilePic ?? null);
-  const [email, setEmail] = useState<string>(user?.email ?? '');
 
   const fetchProfile = async () => {
     const res = await userApi.getProfile();
@@ -98,7 +98,7 @@ const Profile = () => {
       <h1 className="text-2xl font-bold mb-4">Profile</h1>
       <form onSubmit={handleSave} className="space-y-4">
         <div className="md:col-span-2">
-          <label>Upload Profile Image</label>
+          <label>Profile Image</label>
           <div className="flex flex-wrap items-center gap-4">
             <input
               type="file"
@@ -106,8 +106,10 @@ const Profile = () => {
               accept="image/*"
               onChange={handleImage}
               className="block"
+              hidden
             />
             {imagePreview ? (
+              // preview image and the x button to remove it
               <div className="relative group">
                 <img
                   src={imagePreview}
@@ -121,14 +123,6 @@ const Profile = () => {
                 >
                   <X size={16} />
                 </button>
-              </div>
-            ) : profilePic ? (
-              <div className="relative">
-                <img
-                  src={profilePic}
-                  alt="Profile"
-                  className="w-24 h-24 object-cover rounded-full"
-                />
               </div>
             ) : (
               <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center">

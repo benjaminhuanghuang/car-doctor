@@ -2,11 +2,13 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express, { Application } from 'express';
 // Import routes
-import authRoutes from './routes/authRoute.js';
+import authRoutes from './routes/authRoutes.js';
 import healthRouter from './routes/healthRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import carRoutes from './routes/carRoutes.js';
 import maintenanceRoutes from './routes/maintenanceRoutes.js';
+import uploadRoutes from './routes/uploadRoutes.js';
+// DB
 import { connectDB } from './config/database';
 
 dotenv.config();
@@ -24,6 +26,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/cars', carRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Health check
 app.use('/api/health', healthRouter);

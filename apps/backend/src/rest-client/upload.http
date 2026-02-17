@@ -1,0 +1,5 @@
+@token = eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY5OTE3OGUzMGI1NGY0NWQwM2UzOWQ2ZCIsImVtYWlsIjoiYWFhYUBnbWFpbC5jb20iLCJpYXQiOjE3NzEzMTI2MTUsImV4cCI6MTc3MTkxNzQxNX0.UPmpY25ljp0SaoLIsxsWNjEAE3IAIDqwlKdzGdDiWM8 
+
+### 
+GET http://localhost:3001/api/upload/cloudinary-signature
+Authorization: Bearer {{token}}
