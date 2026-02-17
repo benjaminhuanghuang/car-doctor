@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { userApi } from '@/lib/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { X } from 'lucide-react';
 
 const Profile = () => {
   const { user, token, login } = useAuth();
   const queryClient = useQueryClient();
-
-  const [email, setEmail] = useState(user?.email ?? '');
-  const [profilePic, setProfilePic] = useState(user?.profilePic ?? '');
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [profilePic, setProfilePic] = useState<string | null>(user?.profilePic ?? null);
+  const [email, setEmail] = useState<string>(user?.email ?? '');
 
   const fetchProfile = async () => {
     const res = await userApi.getProfile();
@@ -23,16 +26,8 @@ const Profile = () => {
   } = useQuery({
     queryKey: ['profile'],
     queryFn: fetchProfile,
-    enabled: !!token,
+    enabled: true,
   });
-
-  useEffect(() => {
-    const src = profile ?? user;
-    if (src) {
-      setEmail(src.email ?? '');
-      setProfilePic(src.profilePic ?? '');
-    }
-  }, [profile, user]);
 
   const mutation = useMutation({
     mutationFn: async (updates: { profilePic?: string }) => {
@@ -41,8 +36,10 @@ const Profile = () => {
       return res.data!.user;
     },
     onSuccess: (updatedUser) => {
-      queryClient.setQueryData({ queryKey: ['profile'] }, updatedUser);
-      // update auth context so other parts of the app reflect changes
+      queryClient.setQueryData(['profile'], updatedUser);
+      setImagePreview(null);
+      setImageFile(null);
+      setProfilePic(updatedUser.profilePic ?? null);
       if (token) {
         login(token, {
           id: updatedUser.id,
@@ -53,15 +50,94 @@ const Profile = () => {
     },
   });
 
-  const handleSave = (e: React.FormEvent) => {
+  const fileToDataUrl = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+  const handleSave = async (e: React.SubmitEvent) => {
     e.preventDefault();
-    mutation.mutate({ profilePic });
+    if (imageFile) {
+      try {
+        const dataUrl = await fileToDataUrl(imageFile);
+        mutation.mutate({ profilePic: dataUrl });
+        return;
+      } catch (err) {
+        console.error('Failed to read file', err);
+      }
+    }
+    mutation.mutate({ profilePic: imagePreview ?? undefined });
   };
+
+  function handleImage(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (imagePreview && imageFile) {
+      URL.revokeObjectURL(imagePreview);
+    }
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  }
+
+  function removeImage() {
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+    }
+    setImageFile(null);
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }
 
   return (
     <div className="max-w-3xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Profile</h1>
       <form onSubmit={handleSave} className="space-y-4">
+        <div className="md:col-span-2">
+          <label>Upload Profile Image</label>
+          <div className="flex flex-wrap items-center gap-4">
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              onChange={handleImage}
+              className="block"
+            />
+            {imagePreview ? (
+              <div className="relative group">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-24 h-24 object-cover rounded-full"
+                />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute top-0 right-0 bg-white rounded-full p-1 shadow"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            ) : profilePic ? (
+              <div className="relative">
+                <img
+                  src={profilePic}
+                  alt="Profile"
+                  className="w-24 h-24 object-cover rounded-full"
+                />
+              </div>
+            ) : (
+              <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center">
+                No image
+              </div>
+            )}
+          </div>
+        </div>
+
         <div className="mb-3">
           <label className="block font-semibold mb-1">Email</label>
           <input
@@ -75,23 +151,13 @@ const Profile = () => {
           <p className="text-sm text-gray-500 mt-1">Email cannot be changed</p>
         </div>
 
-        <div className="mb-3">
-          <label className="block font-semibold mb-1">Profile picture URL</label>
-          <input
-            value={profilePic}
-            onChange={(e) => setProfilePic(e.target.value)}
-            placeholder="https://..."
-            className="w-full p-2 border rounded"
-          />
-        </div>
-
         <div className="flex items-center gap-3">
           <button
             type="submit"
-            disabled={mutation.isLoading}
+            disabled={mutation.isPending}
             className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
           >
-            {mutation.isLoading ? 'Saving...' : 'Save'}
+            {mutation.isPending ? 'Saving...' : 'Save'}
           </button>
           {mutation.isSuccess && <span className="text-green-600">Profile updated</span>}
           {mutation.isError && (

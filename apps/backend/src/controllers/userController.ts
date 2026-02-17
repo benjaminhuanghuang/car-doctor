@@ -2,6 +2,7 @@ import type { Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { AuthenticatedRequest } from '../middleware/auth';
 import { User } from '../models/User';
+import { uploadToCloudinary } from '../utils/cloudinary';
 
 const getUserId = (req: AuthenticatedRequest): string | undefined => {
   return req.user?.id || (req.user as { userId?: string } | undefined)?.userId;
@@ -50,18 +51,29 @@ export const getProfile = async (req: AuthenticatedRequest, res: Response): Prom
 export const updateProfile = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = getUserId(req);
-    const { email, fullName, profilePic } = req.body;
+    const { email, fullName } = req.body as { email?: string; fullName?: string };
+
+    // If a file was uploaded by multer, upload it to Cloudinary and use that URL
+    let profilePicFromFile: string | undefined = undefined;
+    const file = (req as any).file as Express.Multer.File | undefined;
+    if (file) {
+      const uploadResult = await uploadToCloudinary(file.path, 'Doctor');
+      profilePicFromFile =
+        (uploadResult && (uploadResult.secure_url || uploadResult.url)) || undefined;
+    }
 
     if (!userId) {
       res.status(401).json({ error: 'Unauthorized' });
       return;
     }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { email, fullName, profilePic },
-      { new: true, runValidators: true },
-    );
+    const updateData: any = { ...(email ? { email } : {}), ...(fullName ? { fullName } : {}) };
+    if (profilePicFromFile) updateData.profilePic = profilePicFromFile;
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!updatedUser) {
       res.status(404).json({ error: 'User not found' });
