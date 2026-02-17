@@ -4,6 +4,7 @@ interface ApiResponse<T> {
   data?: T;
   error?: string;
   message?: string;
+  details?: { field: string; message: string }[];
 }
 
 async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
@@ -29,6 +30,8 @@ async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise
     if (!response.ok) {
       return {
         error: data.error || `HTTP error! status: ${response.status}`,
+        message: data.message,
+        details: data.details,
       };
     }
 
@@ -79,3 +82,26 @@ export const authApi = {
 };
 
 export default fetchApi;
+
+// User API
+export const userApi = {
+  getProfile: () =>
+    fetchApi<{ user: { id: string; email: string; fullName: string; profilePic?: string } }>(
+      '/users/profile',
+    ),
+
+  updateProfile: (data: { email?: string; fullName?: string; profilePic?: string }) =>
+    fetchApi<{
+      message: string;
+      user: { id: string; email: string; fullName: string; profilePic?: string };
+    }>('/users/profile', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  changePassword: (data: { currentPassword: string; newPassword: string }) =>
+    fetchApi<{ message: string }>('/users/password', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+};

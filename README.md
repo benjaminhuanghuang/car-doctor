@@ -2,9 +2,10 @@
 
 ## Features and tech stacks
 
-- RESTful API
+- RESTful API + Mongoose + Zod validation
 
-- React
+- React + TanStack Query + AuthContext
+
 - React Native + Expo
 
 ## Engineering

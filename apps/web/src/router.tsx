@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import CarList from './pages/CarList';
 import Profile from './pages/Profile';
+import ChangePassword from './pages/ChangePassword';
 
 const router = createBrowserRouter([
   {
@@ -24,7 +25,19 @@ const router = createBrowserRouter([
       },
       {
         path: '/profile',
-        element: <Profile />,
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/change-password',
+        element: (
+          <ProtectedRoute>
+            <ChangePassword />
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/cars',

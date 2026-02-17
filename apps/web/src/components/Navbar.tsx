@@ -39,6 +39,14 @@ export default function Navbar() {
                 Profile
               </NavLink>
             )}
+            {isAuthenticated && (
+              <NavLink
+                to="/change-password"
+                className={({ isActive }) => (isActive ? 'active' : '')}
+              >
+                Change Password
+              </NavLink>
+            )}
             <NavLink to="/about" className={({ isActive }) => (isActive ? 'active' : '')}>
               About
             </NavLink>
