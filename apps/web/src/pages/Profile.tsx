@@ -1,17 +1,17 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { userApi } from '@/lib/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { X } from 'lucide-react';
-import { email } from 'zod';
+import Loader from '@/components/Loader';
 
 const Profile = () => {
-  const { user, token, login } = useAuth();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   // Local state for image preview and file handling
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [originalProfilePic, setOriginalProfilePic] = useState<string | null>(null);
+  const [email, setEmail] = useState<string>('');
 
   const fetchProfile = async () => {
     const res = await userApi.getProfile();
@@ -28,8 +28,20 @@ const Profile = () => {
     queryFn: fetchProfile,
     enabled: true,
   });
-  const email = userProfile?.email;
-  const imagePreviewUrl = userProfile?.profilePic;
+
+  useEffect(() => {
+    if (userProfile?.profilePic) {
+      setImagePreviewUrl(userProfile.profilePic);
+    }
+    setEmail(userProfile?.email || '');
+    setOriginalProfilePic(userProfile?.profilePic ?? null);
+  }, [userProfile]);
+
+  const isDirty = useMemo(() => {
+    const prev = originalProfilePic ?? null;
+    const current = imagePreviewUrl ?? null;
+    return current !== prev;
+  }, [imagePreviewUrl, originalProfilePic]);
 
   const mutation = useMutation({
     mutationFn: async (updates: { profilePic?: string }) => {
@@ -39,13 +51,7 @@ const Profile = () => {
     },
     onSuccess: (updatedUser) => {
       queryClient.setQueryData(['profile'], updatedUser);
-      if (token) {
-        login(token, {
-          id: updatedUser.id,
-          email: updatedUser.email,
-          profilePic: updatedUser.profilePic,
-        } as any);
-      }
+      setOriginalProfilePic(updatedUser.profilePic ?? null);
     },
   });
 
@@ -59,7 +65,17 @@ const Profile = () => {
 
   const handleSave = async (e: React.SubmitEvent) => {
     e.preventDefault();
+    // If a new image file is selected
     if (imageFile) {
+      // remove it from cloudinary if it exists
+      if (userProfile?.profilePic) {
+        try {
+          await userApi.deleteProfilePic();
+        } catch (err) {
+          console.error('Failed to delete old profile picture', err);
+        }
+      }
+      // upload the image to cloudinary and get the url
       try {
         const dataUrl = await fileToDataUrl(imageFile);
         mutation.mutate({ profilePic: dataUrl });
@@ -67,30 +83,48 @@ const Profile = () => {
       } catch (err) {
         console.error('Failed to read file', err);
       }
+
+      // save the new profile picture url to the server
+      mutation.mutate({ profilePic: imagePreviewUrl ?? undefined });
+
+      setImageFile(null);
+      userProfile.profilePic = imagePreviewUrl; // Update originalProfilePic to the new value after saving
+    } else {
+      // If no new image is selected, it means the user removed the existing image
+      if (userProfile?.profilePic) {
+        try {
+          await userApi.deleteProfilePic();
+          mutation.mutate({ profilePic: undefined });
+        } catch (err) {
+          console.error('Failed to delete profile picture', err);
+        }
+      }
     }
-    mutation.mutate({ profilePic: imagePreview ?? undefined });
   };
 
-  function handleImage(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
-    if (imagePreview && imageFile) {
-      URL.revokeObjectURL(imagePreview);
+
+    if (imagePreviewUrl) {
+      URL.revokeObjectURL(imagePreviewUrl);
     }
     setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
+    setImagePreviewUrl(URL.createObjectURL(file));
   }
 
-  function removeImage() {
-    if (imagePreview) {
-      URL.revokeObjectURL(imagePreview);
+  function removeImagePreview() {
+    if (imagePreviewUrl) {
+      URL.revokeObjectURL(imagePreviewUrl);
     }
     setImageFile(null);
-    setImagePreview(null);
+    setImagePreviewUrl(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
   }
+
+  if (isFetching) return <Loader />;
 
   return (
     <div className="max-w-3xl mx-auto p-4">
@@ -103,41 +137,52 @@ const Profile = () => {
               type="file"
               ref={fileInputRef}
               accept="image/*"
-              onChange={handleImage}
+              onChange={handleImageChange}
               className="block"
               hidden
             />
-            {imagePreviewUrl ? (
-              // preview image and the x button to remove it
-              <div className="relative group">
-                <img
-                  src={imagePreviewUrl}
-                  alt="Preview"
-                  className="w-24 h-24 object-cover rounded-full"
-                />
-                <button
-                  type="button"
-                  onClick={removeImage}
-                  className="absolute top-0 right-0 bg-white rounded-full p-1 shadow"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-            ) : (
-              <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center">
-                No image
-              </div>
-            )}
+            <div
+              className="relative group"
+              onClick={() => fileInputRef.current?.click()}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click();
+              }}
+            >
+              {imagePreviewUrl ? (
+                <>
+                  <img
+                    src={imagePreviewUrl}
+                    alt="Preview"
+                    className="w-24 h-24 object-cover rounded-full"
+                  />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeImagePreview();
+                    }}
+                    className="absolute top-0 right-0  rounded-full p-1 shadow"
+                  >
+                    <X size={16} className="text-red-600" />
+                  </button>
+                </>
+              ) : (
+                <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center">
+                  No image
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
         <div className="mb-3">
           <label className="block font-semibold mb-1">Email</label>
           <input
-            value={email}
+            value={email || ''}
             readOnly
             aria-readonly
-            placeholder="you@example.com"
             type="email"
             className="w-full p-2 border rounded bg-gray-100 cursor-not-allowed"
           />
@@ -147,11 +192,12 @@ const Profile = () => {
         <div className="flex items-center gap-3">
           <button
             type="submit"
-            disabled={mutation.isPending}
+            disabled={!isDirty || mutation.isPending}
             className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
           >
             {mutation.isPending ? 'Saving...' : 'Save'}
           </button>
+          {isDirty && <span className="text-yellow-600">Unsaved changes</span>}
           {mutation.isSuccess && <span className="text-green-600">Profile updated</span>}
           {mutation.isError && (
             <span className="text-red-600">{(mutation.error as Error)?.message ?? 'Error'}</span>
