@@ -1,18 +1,30 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, useNavigate } from 'react-router-dom';
-import { carApi, maintenanceApi } from '@/lib/api';
-import { Car as CarIcon, Calendar, ArrowLeft, Plus, Wrench, DollarSign, Gauge } from 'lucide-react';
+import { carApi, maintenanceApi, type MaintenanceRecord } from '@/lib/api';
+import {
+  Car as CarIcon,
+  Calendar,
+  ArrowLeft,
+  Plus,
+  Wrench,
+  DollarSign,
+  Gauge,
+  Trash2,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Loader from '@/components/Loader';
 import ErrorDisplay from '@/components/ErrorDisplay';
 import { Car3D } from '@/components/Car3D';
 import { AddMaintenanceDialog } from '@/components/AddMaintenanceDialog';
+import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { useState } from 'react';
 
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [isAddMaintenanceOpen, setIsAddMaintenanceOpen] = useState(false);
+  const [deletingMaintenance, setDeletingMaintenance] = useState<MaintenanceRecord | null>(null);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['car', id],
@@ -38,6 +50,19 @@ const CarDetail = () => {
       return response.data!;
     },
     enabled: !!id,
+  });
+
+  const deleteMaintenanceMutation = useMutation({
+    mutationFn: async (maintenanceId: string) => {
+      const response = await maintenanceApi.deleteMaintenanceRecord(maintenanceId);
+      if (response.error) throw new Error(response.error);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['maintenance', id] });
+      queryClient.invalidateQueries({ queryKey: ['car', id] });
+      setDeletingMaintenance(null);
+    },
   });
 
   if (isLoading) {
@@ -82,6 +107,20 @@ const CarDetail = () => {
         open={isAddMaintenanceOpen}
         onOpenChange={setIsAddMaintenanceOpen}
         carId={car._id}
+      />
+
+      <ConfirmDialog
+        open={!!deletingMaintenance}
+        onOpenChange={(open) => !open && setDeletingMaintenance(null)}
+        title="Delete Maintenance Record"
+        description={`Are you sure you want to delete this ${
+          deletingMaintenance ? getMaintenanceTypeLabel(deletingMaintenance.type) : 'maintenance'
+        } record? This action cannot be undone.`}
+        onConfirm={() =>
+          deletingMaintenance && deleteMaintenanceMutation.mutate(deletingMaintenance._id)
+        }
+        confirmText="Delete"
+        isLoading={deleteMaintenanceMutation.isPending}
       />
 
       {/* Top Section - Car Info */}
@@ -182,12 +221,23 @@ const CarDetail = () => {
                         <h3 className="font-semibold">{getMaintenanceTypeLabel(record.type)}</h3>
                         <p className="text-sm text-muted-foreground">{formatDate(record.date)}</p>
                       </div>
-                      {record.cost > 0 && (
-                        <div className="flex items-center gap-1 text-sm font-medium">
-                          <DollarSign className="h-4 w-4" />
-                          {record.cost.toFixed(2)}
-                        </div>
-                      )}
+                      <div className="flex items-center gap-3">
+                        {record.cost > 0 && (
+                          <div className="flex items-center gap-1 text-sm font-medium">
+                            <DollarSign className="h-4 w-4" />
+                            {record.cost.toFixed(2)}
+                          </div>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => setDeletingMaintenance(record)}
+                          title="Delete maintenance record"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
 
                     <p className="text-sm mb-3">{record.description}</p>
