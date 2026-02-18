@@ -140,3 +140,60 @@ export const carApi = {
       method: 'DELETE',
     }),
 };
+
+// Maintenance API
+export interface MaintenanceRecord {
+  _id: string;
+  carId: string;
+  userId: string;
+  type: string;
+  description: string;
+  cost: number;
+  mileage: number;
+  date: string;
+  nextDueDate?: string;
+  nextDueMileage?: number;
+  attachments?: string[];
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateMaintenanceData {
+  carId: string;
+  type: string;
+  description: string;
+  cost?: number;
+  mileage: number;
+  date?: string;
+  nextDueDate?: string;
+  nextDueMileage?: number;
+  attachments?: string[];
+  notes?: string;
+}
+
+export const maintenanceApi = {
+  getMaintenanceRecords: (carId?: string) => {
+    const params = carId ? `?carId=${carId}` : '';
+    return fetchApi<{ count: number; records: MaintenanceRecord[] }>(`/maintenance${params}`);
+  },
+
+  createMaintenanceRecord: (data: CreateMaintenanceData) =>
+    fetchApi<{ message: string; record: MaintenanceRecord }>('/maintenance', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  getMaintenanceById: (id: string) => fetchApi<{ record: MaintenanceRecord }>(`/maintenance/${id}`),
+
+  updateMaintenanceRecord: (id: string, data: Partial<CreateMaintenanceData>) =>
+    fetchApi<{ message: string; record: MaintenanceRecord }>(`/maintenance/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  deleteMaintenanceRecord: (id: string) =>
+    fetchApi<{ message: string }>(`/maintenance/${id}`, {
+      method: 'DELETE',
+    }),
+};
