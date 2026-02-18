@@ -28,7 +28,7 @@ export default function Navbar() {
             <span className="name">Car Doctor</span>
           </NavLink>
 
-          <ul className="links">
+          <ul className="links hidden lg:flex">
             {isAuthenticated && (
               <NavLink to="/cars" className={({ isActive }) => (isActive ? 'active' : '')}>
                 My Cars
@@ -56,7 +56,7 @@ export default function Navbar() {
         <div className="actions">
           {isAuthenticated ? (
             <>
-              <span className="flex items-center gap-2">
+              <span className="hidden md:flex items-center gap-2">
                 <img
                   src={user?.profilePic || '/default-avatar.png'}
                   className="rounded-full object-cover w-8 h-8"
