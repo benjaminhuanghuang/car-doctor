@@ -39,7 +39,7 @@ export default function Navbar() {
             {navLinks.map(({ to, label, authRequired }) => {
               if (authRequired && !isAuthenticated) return null;
               return (
-                <NavLink to={to} className={({ isActive }) => (isActive ? 'active' : '')}>
+                <NavLink key={to} to={to} className={({ isActive }) => (isActive ? 'active' : '')}>
                   <span className="whitespace-nowrap">{label}</span>
                 </NavLink>
               );

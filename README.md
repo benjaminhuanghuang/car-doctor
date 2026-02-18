@@ -6,7 +6,7 @@
 
 - Image uploading: Saving base64 string in mongodb
 
-- Web client: React + TanStack Query + AuthContext
+- Web client: React + TailwindCSS + TanStack Query + AuthContext + react-hook-form + Zod
 
 - Mobile client: React Native + Expo
 
