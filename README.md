@@ -8,7 +8,7 @@
 
 - Mobile client: React Native + Expo
 
-- Image uploading: cloudinary
+- Image uploading: Saving base64 string in mongodb
 
 ## Engineering
 
