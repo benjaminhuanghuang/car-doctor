@@ -39,63 +39,6 @@ const About = () => {
         </div>
       </div>
 
-      {/* Mission Section */}
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-full bg-primary/10">
-                <Target className="h-6 w-6 text-primary" />
-              </div>
-              <h2 className="text-3xl font-bold">Our Mission</h2>
-            </div>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              We believe that car maintenance shouldn't be complicated or stressful. Our mission is
-              to empower every car owner with the tools and insights they need to keep their
-              vehicles running smoothly, safely, and efficiently.
-            </p>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              By combining intelligent tracking, AI-powered recommendations, and an intuitive
-              interface, we make it easy to stay on top of your vehicle's needs and avoid costly
-              repairs down the road.
-            </p>
-          </div>
-
-          <div className="bg-muted/50 rounded-2xl p-8 space-y-6">
-            <h3 className="text-2xl font-bold">Why Choose Car Doctor?</h3>
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <Shield className="h-5 w-5 text-primary mt-1 shrink-0" />
-                <div>
-                  <h4 className="font-semibold">Reliable & Secure</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Your data is protected with industry-standard security
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Zap className="h-5 w-5 text-primary mt-1 shrink-0" />
-                <div>
-                  <h4 className="font-semibold">Fast & Easy</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Log maintenance in seconds with our streamlined interface
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Brain className="h-5 w-5 text-primary mt-1 shrink-0" />
-                <div>
-                  <h4 className="font-semibold">AI-Powered</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Get intelligent insights and recommendations
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Features Grid */}
       <div className="bg-muted/30 py-16">
         <div className="container mx-auto px-4">
