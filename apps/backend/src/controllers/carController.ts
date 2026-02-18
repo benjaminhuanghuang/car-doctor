@@ -27,20 +27,14 @@ export const createCar = async (req: AuthenticatedRequest, res: Response): Promi
     const userId = req.user?.id;
     const { brand, carModel, year, color } = req.body;
 
-    // Validate required fields
-    if (!brand || !carModel || !year || !color) {
-      res.status(400).json({ error: 'Missing required fields' });
-      return;
-    }
-
     // Create car
     const car = await Car.create({
       userId,
       brand,
-      carModel,
+      model: carModel,
       year,
       color,
-    } as any);
+    });
 
     res.status(201).json({
       message: 'Car created successfully',
@@ -87,7 +81,7 @@ export const getCarById = async (req: AuthenticatedRequest, res: Response): Prom
 // Update a car by ID
 export const updateCar = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-    const userId = req.user?.userId;
+    const userId = req.user?.id;
     const { id } = req.params;
 
     if (!userId) {
@@ -95,7 +89,14 @@ export const updateCar = async (req: AuthenticatedRequest, res: Response): Promi
       return;
     }
 
-    const car = await Car.findOneAndUpdate({ _id: id, userId }, req.body, {
+    // Map carModel to model for the schema
+    const updateData: any = { ...req.body };
+    if (updateData.carModel) {
+      updateData.model = updateData.carModel;
+      delete updateData.carModel;
+    }
+
+    const car = await Car.findOneAndUpdate({ _id: id, userId }, updateData, {
       new: true,
       runValidators: true,
     });
@@ -121,7 +122,7 @@ export const updateCar = async (req: AuthenticatedRequest, res: Response): Promi
 // Delete a car by ID
 export const deleteCar = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-    const userId = req.user?.userId;
+    const userId = req.user?.id;
     const { id } = req.params;
 
     if (!userId) {

@@ -2,13 +2,13 @@
 
 ## Features and tech stacks
 
-- Server: RESTful API + Mongoose + Zod validation
+- Server: RESTful API + Mongoose + Zod + middleware validation + middleware error handler
+
+- Image uploading: Saving base64 string in mongodb
 
 - Web client: React + TanStack Query + AuthContext
 
 - Mobile client: React Native + Expo
-
-- Image uploading: Saving base64 string in mongodb
 
 ## Engineering
 
