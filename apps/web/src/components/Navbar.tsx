@@ -4,6 +4,13 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { ThemeToggle } from './ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
 
+const navLinks = [
+  { to: '/cars', label: 'My Cars', authRequired: true },
+  { to: '/profile', label: 'Profile', authRequired: true },
+  { to: '/change-password', label: 'Change Password', authRequired: true },
+  { to: '/about', label: 'About', authRequired: false },
+];
+
 export default function Navbar() {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
@@ -29,27 +36,14 @@ export default function Navbar() {
           </NavLink>
 
           <ul className="links hidden lg:flex">
-            {isAuthenticated && (
-              <NavLink to="/cars" className={({ isActive }) => (isActive ? 'active' : '')}>
-                My Cars
-              </NavLink>
-            )}
-            {isAuthenticated && (
-              <NavLink to="/profile" className={({ isActive }) => (isActive ? 'active' : '')}>
-                Profile
-              </NavLink>
-            )}
-            {isAuthenticated && (
-              <NavLink
-                to="/change-password"
-                className={({ isActive }) => (isActive ? 'active' : '')}
-              >
-                Change Password
-              </NavLink>
-            )}
-            <NavLink to="/about" className={({ isActive }) => (isActive ? 'active' : '')}>
-              About
-            </NavLink>
+            {navLinks.map(({ to, label, authRequired }) => {
+              if (authRequired && !isAuthenticated) return null;
+              return (
+                <NavLink to={to} className={({ isActive }) => (isActive ? 'active' : '')}>
+                  <span className="whitespace-nowrap">{label}</span>
+                </NavLink>
+              );
+            })}
           </ul>
         </div>
 
