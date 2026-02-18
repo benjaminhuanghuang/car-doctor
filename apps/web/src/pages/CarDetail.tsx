@@ -10,6 +10,7 @@ import {
   DollarSign,
   Gauge,
   Trash2,
+  MessageCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Loader from '@/components/Loader';
@@ -17,6 +18,7 @@ import ErrorDisplay from '@/components/ErrorDisplay';
 import { Car3D } from '@/components/Car3D';
 import { AddMaintenanceDialog } from '@/components/AddMaintenanceDialog';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { ChatPanel } from '@/components/ChatPanel';
 import { useState } from 'react';
 
 const CarDetail = () => {
@@ -25,6 +27,7 @@ const CarDetail = () => {
   const queryClient = useQueryClient();
   const [isAddMaintenanceOpen, setIsAddMaintenanceOpen] = useState(false);
   const [deletingMaintenance, setDeletingMaintenance] = useState<MaintenanceRecord | null>(null);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['car', id],
@@ -121,6 +124,17 @@ const CarDetail = () => {
         }
         confirmText="Delete"
         isLoading={deleteMaintenanceMutation.isPending}
+      />
+
+      <ChatPanel
+        open={isChatOpen}
+        onOpenChange={setIsChatOpen}
+        carInfo={{
+          brand: car.brand,
+          model: car.model,
+          year: car.year,
+          maintenanceCount: maintenanceRecords.length,
+        }}
       />
 
       {/* Top Section - Car Info */}
@@ -265,6 +279,15 @@ const CarDetail = () => {
           )}
         </div>
       </div>
+
+      {/* Floating Chat Button */}
+      <Button
+        onClick={() => setIsChatOpen(true)}
+        className="fixed bottom-20 right-6 h-14 w-14 rounded-full shadow-lg z-40"
+        size="icon"
+      >
+        <MessageCircle className="h-6 w-6" />
+      </Button>
     </div>
   );
 };
