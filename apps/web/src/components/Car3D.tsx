@@ -104,7 +104,7 @@ const CarModel = ({ color = '#3b82f6' }: { color: string }) => {
 
 export const Car3D = ({ color = '#3b82f6' }: Car3DProps) => {
   return (
-    <div className="w-full h-100 rounded-lg overflow-hidden bg-linear-to-b from-sky-100 to-slate-100 dark:from-slate-800 dark:to-slate-900">
+    <div className="w-full h-full rounded-lg overflow-hidden bg-linear-to-b from-sky-100 to-slate-100 dark:from-slate-800 dark:to-slate-900">
       <Canvas shadows>
         <PerspectiveCamera makeDefault position={[4, 3, 6]} fov={50} />
         <OrbitControls

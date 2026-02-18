@@ -1,16 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { carApi, maintenanceApi } from '@/lib/api';
-import {
-  Car as CarIcon,
-  Calendar,
-  Palette,
-  ArrowLeft,
-  Plus,
-  Wrench,
-  DollarSign,
-  Gauge,
-} from 'lucide-react';
+import { Car as CarIcon, Calendar, ArrowLeft, Plus, Wrench, DollarSign, Gauge } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Loader from '@/components/Loader';
 import ErrorDisplay from '@/components/ErrorDisplay';
@@ -93,156 +84,138 @@ const CarDetail = () => {
         carId={car._id}
       />
 
-      <div className="mb-6">
-        <Link to="/cars">
-          <Button variant="ghost" size="sm" className="gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Cars
+      {/* Top Section - Car Info */}
+      <div className="rounded-lg border bg-card p-6 mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-full bg-primary/10">
+              <CarIcon className="h-8 w-8 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold">
+                {car.brand} {car.model}
+              </h1>
+              <div className="flex items-center gap-4 text-sm mt-2">
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">{car.year}</span>
+                </div>
+
+                {car.color && (
+                  <>
+                    <div className="h-4 w-px bg-border" />
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        className="h-4 w-4 rounded-full border-2"
+                        style={{ backgroundColor: car.color.toLowerCase() }}
+                      />
+                      <span className="font-medium capitalize">{car.color}</span>
+                    </div>
+                  </>
+                )}
+
+                <div className="h-4 w-px bg-border" />
+                <div className="flex items-center gap-1.5">
+                  <Wrench className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">{maintenanceRecords.length} records</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <Button className="gap-2" onClick={() => setIsAddMaintenanceOpen(true)}>
+            <Plus className="h-4 w-4" />
+            Add Maintenance
           </Button>
-        </Link>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - Car Info */}
-        <div className="lg:col-span-1 space-y-4">
-          <div className="rounded-lg border bg-card p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-full bg-primary/10">
-                <CarIcon className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold">{car.brand}</h1>
-                <p className="text-muted-foreground">{car.model}</p>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex items-center justify-between py-2 border-b">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Calendar className="h-4 w-4" />
-                  <span>Year</span>
-                </div>
-                <span className="font-medium">{car.year}</span>
-              </div>
-
-              {car.color && (
-                <div className="flex items-center justify-between py-2 border-b">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Palette className="h-4 w-4" />
-                    <span>Color</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="h-5 w-5 rounded-full border-2"
-                      style={{ backgroundColor: car.color.toLowerCase() }}
-                    />
-                    <span className="font-medium capitalize">{car.color}</span>
-                  </div>
-                </div>
-              )}
-
-              <div className="flex items-center justify-between py-2">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Wrench className="h-4 w-4" />
-                  <span>Records</span>
-                </div>
-                <span className="font-medium">{maintenanceRecords.length}</span>
-              </div>
-            </div>
-
-            <Button className="w-full mt-6 gap-2" onClick={() => setIsAddMaintenanceOpen(true)}>
-              <Plus className="h-4 w-4" />
-              Add Maintenance
-            </Button>
-          </div>
+      {/* Bottom Section - 3D Car (Left) and History (Right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-150">
+        {/* Left Column - 3D Car Visualization */}
+        <div className="rounded-lg border bg-card overflow-hidden h-full">
+          <Car3D color={car.color || '#3b82f6'} />
         </div>
 
-        {/* Right Column - 3D Car and Timeline */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* 3D Car Visualization */}
-          <div className="rounded-lg border bg-card overflow-hidden">
-            <Car3D color={car.color || '#3b82f6'} />
+        {/* Right Column - Maintenance Timeline */}
+        <div className="rounded-lg border bg-card p-6 flex flex-col h-full">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold">Maintenance History</h2>
+            {maintenanceRecords.length > 0 && (
+              <span className="text-sm text-muted-foreground">
+                {maintenanceRecords.length} record{maintenanceRecords.length !== 1 ? 's' : ''}
+              </span>
+            )}
           </div>
 
-          {/* Maintenance Timeline */}
-          <div className="rounded-lg border bg-card p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold">Maintenance History</h2>
-              {maintenanceRecords.length > 0 && (
-                <span className="text-sm text-muted-foreground">
-                  {maintenanceRecords.length} record{maintenanceRecords.length !== 1 ? 's' : ''}
-                </span>
-              )}
+          {isLoadingMaintenance ? (
+            <div className="flex justify-center py-8">
+              <Loader />
             </div>
-
-            {isLoadingMaintenance ? (
-              <div className="flex justify-center py-8">
-                <Loader />
-              </div>
-            ) : maintenanceError ? (
-              <ErrorDisplay
-                message={
-                  maintenanceError instanceof Error
-                    ? maintenanceError.message
-                    : 'Failed to load maintenance records'
-                }
-              />
-            ) : maintenanceRecords.length === 0 ? (
-              <div className="text-center py-12">
+          ) : maintenanceError ? (
+            <ErrorDisplay
+              message={
+                maintenanceError instanceof Error
+                  ? maintenanceError.message
+                  : 'Failed to load maintenance records'
+              }
+            />
+          ) : maintenanceRecords.length === 0 ? (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center">
                 <Wrench className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
                 <p className="text-muted-foreground">No maintenance records yet</p>
                 <p className="text-sm text-muted-foreground mt-1">
                   Start tracking your car's maintenance history
                 </p>
               </div>
-            ) : (
-              <div className="space-y-4">
-                {maintenanceRecords.map((record) => (
-                  <div
-                    key={record._id}
-                    className="relative pl-8 pb-8 border-l-2 border-border last:pb-0 last:border-l-0"
-                  >
-                    {/* Timeline dot */}
-                    <div className="absolute -left-2.25 top-0 w-4 h-4 rounded-full bg-primary border-4 border-background" />
+            </div>
+          ) : (
+            <div className="space-y-4 flex-1 overflow-y-auto pr-2">
+              {maintenanceRecords.map((record) => (
+                <div
+                  key={record._id}
+                  className="relative pl-8 pb-8 border-l-2 border-border last:pb-0 last:border-l-0"
+                >
+                  {/* Timeline dot */}
+                  <div className="absolute -left-2.25 top-0 w-4 h-4 rounded-full bg-primary border-4 border-background" />
 
-                    <div className="bg-muted/50 rounded-lg p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <h3 className="font-semibold">{getMaintenanceTypeLabel(record.type)}</h3>
-                          <p className="text-sm text-muted-foreground">{formatDate(record.date)}</p>
-                        </div>
-                        {record.cost > 0 && (
-                          <div className="flex items-center gap-1 text-sm font-medium">
-                            <DollarSign className="h-4 w-4" />
-                            {record.cost.toFixed(2)}
-                          </div>
-                        )}
+                  <div className="bg-muted/50 rounded-lg p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <h3 className="font-semibold">{getMaintenanceTypeLabel(record.type)}</h3>
+                        <p className="text-sm text-muted-foreground">{formatDate(record.date)}</p>
                       </div>
-
-                      <p className="text-sm mb-3">{record.description}</p>
-
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Gauge className="h-3 w-3" />
-                          {record.mileage.toLocaleString()} mi
-                        </div>
-                        {record.nextDueMileage && (
-                          <div>Next: {record.nextDueMileage.toLocaleString()} mi</div>
-                        )}
-                        {record.nextDueDate && <div>Due: {formatDate(record.nextDueDate)}</div>}
-                      </div>
-
-                      {record.notes && (
-                        <div className="mt-3 pt-3 border-t text-sm text-muted-foreground">
-                          <strong>Notes:</strong> {record.notes}
+                      {record.cost > 0 && (
+                        <div className="flex items-center gap-1 text-sm font-medium">
+                          <DollarSign className="h-4 w-4" />
+                          {record.cost.toFixed(2)}
                         </div>
                       )}
                     </div>
+
+                    <p className="text-sm mb-3">{record.description}</p>
+
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Gauge className="h-3 w-3" />
+                        {record.mileage.toLocaleString()} mi
+                      </div>
+                      {record.nextDueMileage && (
+                        <div>Next: {record.nextDueMileage.toLocaleString()} mi</div>
+                      )}
+                      {record.nextDueDate && <div>Due: {formatDate(record.nextDueDate)}</div>}
+                    </div>
+
+                    {record.notes && (
+                      <div className="mt-3 pt-3 border-t text-sm text-muted-foreground">
+                        <strong>Notes:</strong> {record.notes}
+                      </div>
+                    )}
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
