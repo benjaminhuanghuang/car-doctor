@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { carApi, type Car } from '@/lib/api';
 import { Car as CarIcon, Plus, Calendar, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import Loader from '@/components/Loader';
 import ErrorDisplay from '@/components/ErrorDisplay';
 import { AddCarDialog } from '@/components/AddCarDialog';
@@ -164,8 +165,8 @@ const CarCard = ({ car, onEdit, onDelete, isDeleting }: CarCardProps) => {
         </div>
 
         <div className="mt-6 flex gap-2">
-          <Button variant="outline" size="sm" className="flex-1">
-            View Details
+          <Button variant="outline" size="sm" className="flex-1" asChild>
+            <Link to={`/cars/${car._id}`}>View Details</Link>
           </Button>
           <Button variant="ghost" size="sm" onClick={onEdit}>
             Edit

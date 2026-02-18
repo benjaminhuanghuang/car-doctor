@@ -8,6 +8,7 @@ import About from './pages/About';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import CarList from './pages/CarList';
+import CarDetail from './pages/CarDetail';
 import Profile from './pages/Profile';
 import ChangePassword from './pages/ChangePassword';
 
@@ -45,6 +46,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <CarList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/cars/:id',
+        element: (
+          <ProtectedRoute>
+            <CarDetail />
           </ProtectedRoute>
         ),
       },
