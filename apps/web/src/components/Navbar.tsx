@@ -56,12 +56,10 @@ export default function Navbar() {
         <div className="actions">
           {isAuthenticated ? (
             <>
-              <span className="flex items-center gap-2 rounded-2xl">
+              <span className="flex items-center gap-2">
                 <img
                   src={user?.profilePic || '/default-avatar.png'}
-                  className="avatar"
-                  width={12}
-                  height={12}
+                  className="rounded-full object-cover w-8 h-8"
                 />
                 {`${user?.email}`}
               </span>

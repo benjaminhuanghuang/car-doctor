@@ -23,8 +23,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const updateProfile = (profile: UserProfile) => {
     const updated = {
-      ...user,
-      ...profile,
+      ...user!,
+      profilePic: profile.profilePic,
     };
     setUser(updated);
     setItem('user', updated);
