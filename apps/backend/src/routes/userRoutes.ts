@@ -37,6 +37,7 @@ const updateProfileSchema = z.object({
         message: 'Profile picture must be smaller than 5MB',
       },
     )
+    .or(z.literal('')) // Allow empty string to clear profile picture
     .optional(),
 });
 

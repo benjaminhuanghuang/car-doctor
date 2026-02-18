@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { getItem, setItem } from '@/lib/localStorage';
 import { AuthContext } from './AuthContext';
-import type { User } from '@/types/user';
+import type { User, UserProfile } from '@/types/user';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(() => getItem<User>('user'));
@@ -21,6 +21,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('user');
   };
 
+  const updateProfile = (profile: UserProfile) => {
+    const updated = {
+      ...user,
+      ...profile,
+    };
+    setUser(updated);
+    setItem('user', updated);
+  };
+
   const value = {
     user,
     token,
@@ -28,6 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading: false,
     login,
     logout,
+    updateProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

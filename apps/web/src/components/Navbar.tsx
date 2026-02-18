@@ -56,8 +56,15 @@ export default function Navbar() {
         <div className="actions">
           {isAuthenticated ? (
             <>
-              <span>{`Hi, ${user?.email}`}</span>
-
+              <span className="flex items-center gap-2 rounded-2xl">
+                <img
+                  src={user?.profilePic || '/default-avatar.png'}
+                  className="avatar"
+                  width={12}
+                  height={12}
+                />
+                {`${user?.email}`}
+              </span>
               <Button size="sm" onClick={handleAuthClick} className="btn">
                 Log Out
               </Button>

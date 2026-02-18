@@ -1,10 +1,11 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { userApi } from '@/lib/api';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { X } from 'lucide-react';
-import Loader from '@/components/Loader';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Profile = () => {
+  const { user, updateProfile } = useAuth();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   // Local state for image preview and file handling
@@ -12,34 +13,18 @@ const Profile = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [email, setEmail] = useState<string>('');
 
-  const fetchProfile = async () => {
-    const res = await userApi.getProfile();
-    if (res.error) throw new Error(res.error);
-    return res.data!.user;
-  };
-
-  const {
-    data: userProfile,
-    isLoading: isFetching,
-    error: fetchError,
-  } = useQuery({
-    queryKey: ['profile'],
-    queryFn: fetchProfile,
-    enabled: true,
-  });
-
   useEffect(() => {
-    if (userProfile?.profilePic) {
-      setImagePreview(userProfile.profilePic);
+    if (user?.profilePic) {
+      setImagePreview(user.profilePic);
     }
-    setEmail(userProfile?.email || '');
-  }, [userProfile]);
+    setEmail(user?.email || '');
+  }, [user]);
 
   const isDirty = useMemo(() => {
     const current = imagePreview ?? null;
-    const prev = userProfile?.profilePic ?? null;
+    const prev = user?.profilePic ?? null;
     return current !== prev;
-  }, [imagePreview, userProfile?.profilePic]);
+  }, [imagePreview, user?.profilePic]);
 
   const mutation = useMutation({
     mutationFn: async (updates: { profilePic?: string }) => {
@@ -63,16 +48,20 @@ const Profile = () => {
 
   const handleSave = async (e: React.SubmitEvent) => {
     e.preventDefault();
+    let profilePic = imagePreview;
     // If a new image file is selected
     if (imageFile) {
       const base64 = imagePreview.startsWith('blob:')
         ? await fileToDataUrl(imageFile)
         : imagePreview;
-      mutation.mutate({ profilePic: base64 });
-      return;
+      profilePic = base64;
     } else {
-      mutation.mutate({ profilePic: '' });
+      profilePic = '';
     }
+    mutation.mutate({ profilePic });
+    updateProfile({
+      profilePic: profilePic,
+    });
   };
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -97,8 +86,6 @@ const Profile = () => {
       fileInputRef.current.value = '';
     }
   }
-
-  if (isFetching) return <Loader />;
 
   return (
     <div className="max-w-3xl mx-auto p-4">
@@ -176,8 +163,6 @@ const Profile = () => {
           {mutation.isError && (
             <span className="text-red-600">{(mutation.error as Error)?.message ?? 'Error'}</span>
           )}
-          {isFetching && <span className="text-gray-600">Loading...</span>}
-          {fetchError && <span className="text-red-600">{(fetchError as Error).message}</span>}
         </div>
       </form>
     </div>

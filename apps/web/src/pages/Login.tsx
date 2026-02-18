@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  email: z.email('Invalid email address'),
   password: z.string().min(1, 'Password is required'),
 });
 

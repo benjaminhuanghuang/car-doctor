@@ -8,15 +8,14 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { user, isLoading } = useAuth();
+  const { token, user, isLoading } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
     return <Loader />;
   }
-
-  if (!user) {
-    // redirect to login page and preserve the current location for redirecting back after login
+  // Keep token and user integrity: if either is missing, treat as unauthenticated
+  if (!token || !user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
