@@ -143,8 +143,6 @@ const CarCard = ({ car, onEdit, onDelete, isDeleting }: CarCardProps) => {
 
           {car.color && (
             <div className="flex items-center gap-2 text-sm">
-              <Palette className="h-4 w-4 text-muted-foreground" />
-              <span className="text-muted-foreground">Color:</span>
               <div className="flex items-center gap-2">
                 <div
                   className="h-4 w-4 rounded-full border"
