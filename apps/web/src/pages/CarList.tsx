@@ -5,10 +5,12 @@ import { Button } from '@/components/ui/button';
 import Loader from '@/components/Loader';
 import ErrorDisplay from '@/components/ErrorDisplay';
 import { AddCarDialog } from '@/components/AddCarDialog';
+import { EditCarDialog } from '@/components/EditCarDialog';
 import { useState } from 'react';
 
 const CarList = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [editingCar, setEditingCar] = useState<Car | null>(null);
   const { data, isLoading, error } = useQuery({
     queryKey: ['cars'],
     queryFn: async () => {
@@ -31,6 +33,11 @@ const CarList = () => {
   return (
     <>
       <AddCarDialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen} />
+      <EditCarDialog
+        open={!!editingCar}
+        onOpenChange={(open) => !open && setEditingCar(null)}
+        car={editingCar}
+      />
 
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
@@ -59,7 +66,7 @@ const CarList = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {cars.map((car) => (
-              <CarCard key={car._id} car={car} />
+              <CarCard key={car._id} car={car} onEdit={() => setEditingCar(car)} />
             ))}
           </div>
         )}
@@ -70,9 +77,10 @@ const CarList = () => {
 
 interface CarCardProps {
   car: Car;
+  onEdit: () => void;
 }
 
-const CarCard = ({ car }: CarCardProps) => {
+const CarCard = ({ car, onEdit }: CarCardProps) => {
   return (
     <div className="group relative overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-md transition-all">
       <div className="p-6">
@@ -114,7 +122,7 @@ const CarCard = ({ car }: CarCardProps) => {
           <Button variant="outline" size="sm" className="flex-1">
             View Details
           </Button>
-          <Button variant="ghost" size="sm">
+          <Button variant="ghost" size="sm" onClick={onEdit}>
             Edit
           </Button>
         </div>

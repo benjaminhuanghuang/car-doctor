@@ -84,11 +84,6 @@ export const updateCar = async (req: AuthenticatedRequest, res: Response): Promi
     const userId = req.user?.id;
     const { id } = req.params;
 
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
-
     // Map carModel to model for the schema
     const updateData: any = { ...req.body };
     if (updateData.carModel) {
@@ -124,11 +119,6 @@ export const deleteCar = async (req: AuthenticatedRequest, res: Response): Promi
   try {
     const userId = req.user?.id;
     const { id } = req.params;
-
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
 
     const car = await Car.findOneAndDelete({ _id: id, userId });
 
