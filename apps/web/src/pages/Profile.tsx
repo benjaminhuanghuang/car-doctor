@@ -145,9 +145,9 @@ const Profile = () => {
             readOnly
             aria-readonly
             type="email"
-            className="w-full p-2 border rounded bg-gray-100 cursor-not-allowed"
+            className="w-full p-2 border border-input rounded bg-muted cursor-not-allowed text-foreground"
           />
-          <p className="text-sm text-gray-500 mt-1">Email cannot be changed</p>
+          <p className="text-sm text-muted-foreground mt-1">Email cannot be changed</p>
         </div>
 
         <div className="flex items-center gap-3">
