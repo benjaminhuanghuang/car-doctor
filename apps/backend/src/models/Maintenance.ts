@@ -44,17 +44,17 @@ const maintenanceSchema = new Schema<IMaintenance>(
     },
     description: {
       type: String,
-      required: true,
+      required: false,
     },
     cost: {
       type: Number,
-      required: true,
+      required: false,
       min: 0,
       default: 0,
     },
     mileage: {
       type: Number,
-      required: true,
+      required: false,
       min: 0,
     },
     date: {
@@ -67,11 +67,7 @@ const maintenanceSchema = new Schema<IMaintenance>(
     },
     nextDueMileage: {
       type: Number,
-      min: 0,
-    },
-    attachments: {
-      type: [String],
-      default: [],
+      min: 1000,
     },
     notes: {
       type: String,
