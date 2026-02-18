@@ -3,10 +3,6 @@ import bcrypt from 'bcryptjs';
 import { AuthenticatedRequest } from '../middleware/auth';
 import { User } from '../models/User';
 
-const getUserId = (req: AuthenticatedRequest): string | undefined => {
-  return req.user?.id || (req.user as { userId?: string } | undefined)?.userId;
-};
-
 const toPublicUser = (user: { _id: unknown; email: string; profilePic?: string }) => {
   return {
     id: user._id,
@@ -18,12 +14,7 @@ const toPublicUser = (user: { _id: unknown; email: string; profilePic?: string }
 // Get current user profile
 export const getProfile = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-    const userId = getUserId(req);
-
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
+    const userId = req.user?.id;
 
     const user = await User.findById(userId);
     if (!user) {
@@ -43,13 +34,8 @@ export const getProfile = async (req: AuthenticatedRequest, res: Response): Prom
 
 export const updateProfile = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = getUserId(req);
+    const userId = req.user?.id;
     const { email, profilePic } = req.body;
-
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
 
     const updateData = {
       email,
@@ -78,13 +64,8 @@ export const updateProfile = async (req: AuthenticatedRequest, res: Response) =>
 
 export const changePassword = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = getUserId(req);
+    const userId = req.user?.id;
     const { currentPassword, newPassword } = req.body;
-
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
 
     if (!currentPassword || !newPassword) {
       res.status(400).json({ error: 'Current and new password are required' });

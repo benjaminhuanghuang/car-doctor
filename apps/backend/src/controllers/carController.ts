@@ -5,13 +5,7 @@ import { AuthenticatedRequest } from '../middleware/auth';
 // Get all cars belonging to the authenticated user
 export const getCars = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
-
+    const userId = req.user?.id;
     const cars = await Car.find({ userId }).sort({ createdAt: -1 });
 
     res.json({
@@ -30,13 +24,7 @@ export const getCars = async (req: AuthenticatedRequest, res: Response): Promise
 // Create a new car for the authenticated user
 export const createCar = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-    const userId = req.user?.userId;
-
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
-
+    const userId = req.user?.id;
     const { brand, carModel, year, color } = req.body;
 
     // Validate required fields
@@ -76,13 +64,8 @@ export const createCar = async (req: AuthenticatedRequest, res: Response): Promi
 // Get a single car by ID
 export const getCarById = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-    const userId = req.user?.userId;
+    const userId = req.user?.id;
     const { id } = req.params;
-
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
 
     const car = await Car.findOne({ _id: id, userId });
 

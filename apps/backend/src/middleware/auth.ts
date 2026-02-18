@@ -15,7 +15,7 @@ export const authenticateToken = async (
     const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 
     if (!token) {
-      res.status(401).json({ error: 'Access token required' });
+      res.status(401).json({ error: 'Unauthorized, access token required' });
       return;
     }
 
@@ -23,7 +23,7 @@ export const authenticateToken = async (
     req.user = payload;
     next();
   } catch (err) {
-    res.status(403).json({ error: 'Invalid or expired token' });
+    res.status(403).json({ error: 'Forbidden, invalid or expired token' });
     return;
   }
 };

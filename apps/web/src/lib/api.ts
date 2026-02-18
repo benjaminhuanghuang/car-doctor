@@ -14,7 +14,7 @@ async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise
   headers.append('Content-Type', 'application/json');
 
   if (token) {
-    headers.append('Authorization', `Bearer ${token?.replace(/"/g, '')}`);
+    headers.append('Authorization', `Bearer ${token}`);
   }
 
   try {
@@ -101,15 +101,42 @@ export const userApi = {
     }),
 };
 
-export const uploadApi = {
-  getCloudinarySignature: () =>
-    fetchApi<{ timestamp: number; signature: string }>('/cloudinary-signature', {
-      method: 'GET',
+// Car API
+export interface Car {
+  _id: string;
+  userId: string;
+  brand: string;
+  model: string;
+  year: number;
+  color?: string;
+}
+
+export interface CreateCarData {
+  brand: string;
+  carModel: string;
+  year: number;
+  color?: string;
+}
+
+export const carApi = {
+  getCars: () => fetchApi<{ count: number; cars: Car[] }>('/cars'),
+
+  createCar: (data: CreateCarData) =>
+    fetchApi<{ message: string; car: Car }>('/cars', {
+      method: 'POST',
+      body: JSON.stringify(data),
     }),
 
-  deleteFile: (cloudinaryUrl: string) =>
-    fetchApi<{ message: string }>('/delete-file', {
+  getCarById: (id: string) => fetchApi<{ car: Car }>(`/cars/${id}`),
+
+  updateCar: (id: string, data: Partial<CreateCarData>) =>
+    fetchApi<{ message: string; car: Car }>(`/cars/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  deleteCar: (id: string) =>
+    fetchApi<{ message: string }>(`/cars/${id}`, {
       method: 'DELETE',
-      body: JSON.stringify({ cloudinaryUrl }),
     }),
 };
