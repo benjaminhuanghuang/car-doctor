@@ -1,9 +1,9 @@
-interface ErrorProps {
+interface ErrorDisplayProps {
   title?: string;
   message: string;
 }
 
-const Error = ({ title = 'Error loading cars', message }: ErrorProps) => {
+const ErrorDisplay = ({ title = 'Error loading cars', message }: ErrorDisplayProps) => {
   return (
     <div className="flex items-center justify-center min-h-100">
       <div className="text-center">
@@ -14,4 +14,4 @@ const Error = ({ title = 'Error loading cars', message }: ErrorProps) => {
   );
 };
 
-export default Error;
+export default ErrorDisplay;

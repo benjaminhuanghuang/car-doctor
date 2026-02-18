@@ -18,7 +18,7 @@ export const authenticateToken = async (
       res.status(401).json({ error: 'Unauthorized, access token required' });
       return;
     }
-
+    // Verify token and attach user info to request
     const payload = await verifyToken(token);
     req.user = payload;
     next();
