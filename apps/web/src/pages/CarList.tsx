@@ -1,16 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { carApi, type Car } from '@/lib/api';
-import { Car as CarIcon, Plus, Calendar, Palette, X } from 'lucide-react';
+import { Car as CarIcon, Plus, Calendar, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Loader from '@/components/Loader';
 import ErrorDisplay from '@/components/ErrorDisplay';
 import { AddCarDialog } from '@/components/AddCarDialog';
 import { EditCarDialog } from '@/components/EditCarDialog';
+import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { useState } from 'react';
 
 const CarList = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingCar, setEditingCar] = useState<Car | null>(null);
+  const [deletingCar, setDeletingCar] = useState<Car | null>(null);
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
@@ -30,15 +32,13 @@ const CarList = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cars'] });
+      setDeletingCar(null);
     },
   });
 
-  const handleDelete = async (car: Car) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete ${car.brand} ${car.model}? This action cannot be undone.`,
-    );
-    if (confirmed) {
-      deleteMutation.mutate(car._id);
+  const handleConfirmDelete = () => {
+    if (deletingCar) {
+      deleteMutation.mutate(deletingCar._id);
     }
   };
 
@@ -59,6 +59,15 @@ const CarList = () => {
         open={!!editingCar}
         onOpenChange={(open) => !open && setEditingCar(null)}
         car={editingCar}
+      />
+      <ConfirmDialog
+        open={!!deletingCar}
+        onOpenChange={(open) => !open && setDeletingCar(null)}
+        title="Delete Car"
+        description={`Are you sure you want to delete ${deletingCar?.brand} ${deletingCar?.model}? This action cannot be undone.`}
+        onConfirm={handleConfirmDelete}
+        confirmText="Delete"
+        isLoading={deleteMutation.isPending}
       />
 
       <div className="container mx-auto px-4 py-8">
@@ -92,7 +101,7 @@ const CarList = () => {
                 key={car._id}
                 car={car}
                 onEdit={() => setEditingCar(car)}
-                onDelete={() => handleDelete(car)}
+                onDelete={() => setDeletingCar(car)}
                 isDeleting={deleteMutation.isPending && deleteMutation.variables === car._id}
               />
             ))}
