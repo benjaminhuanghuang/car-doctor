@@ -1,6 +1,5 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { carApi, type Car } from '@/lib/api';
 import { Button } from './ui/button';
@@ -14,21 +13,9 @@ import {
   DialogFooter,
 } from './ui/dialog';
 import { useState, useEffect } from 'react';
-
-const carSchema = z.object({
-  brand: z.string().min(1, 'Brand is required'),
-  carModel: z.string().min(1, 'Model is required'),
-  year: z
-    .number({
-      message: 'Year must be a number',
-    })
-    .int('Year must be a whole number')
-    .min(1900, 'Year must be at least 1900')
-    .max(new Date().getFullYear() + 1, `Year must be at most ${new Date().getFullYear() + 1}`),
-  color: z.string().optional(),
-});
-
-type CarFormData = z.infer<typeof carSchema>;
+import { carSchema } from '@/lib/schemas';
+import type { CarFormData } from '@/lib/schemas';
+import { CarFormFields } from './CarFormFields';
 
 interface EditCarDialogProps {
   open: boolean;
@@ -100,71 +87,7 @@ export const EditCarDialog = ({ open, onOpenChange, car }: EditCarDialogProps) =
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogBody>
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="brand" className="block text-sm font-medium mb-1">
-                  Brand <span className="text-destructive">*</span>
-                </label>
-                <input
-                  id="brand"
-                  type="text"
-                  {...register('brand')}
-                  className="w-full px-3 py-2 border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
-                  placeholder="e.g., Toyota, Honda, Ford"
-                />
-                {errors.brand && (
-                  <p className="mt-1 text-sm text-destructive">{errors.brand.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label htmlFor="carModel" className="block text-sm font-medium mb-1">
-                  Model <span className="text-destructive">*</span>
-                </label>
-                <input
-                  id="carModel"
-                  type="text"
-                  {...register('carModel')}
-                  className="w-full px-3 py-2 border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
-                  placeholder="e.g., Camry, Accord, F-150"
-                />
-                {errors.carModel && (
-                  <p className="mt-1 text-sm text-destructive">{errors.carModel.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label htmlFor="year" className="block text-sm font-medium mb-1">
-                  Year <span className="text-destructive">*</span>
-                </label>
-                <input
-                  id="year"
-                  type="number"
-                  {...register('year', { valueAsNumber: true })}
-                  className="w-full px-3 py-2 border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
-                  placeholder={new Date().getFullYear().toString()}
-                />
-                {errors.year && (
-                  <p className="mt-1 text-sm text-destructive">{errors.year.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label htmlFor="color" className="block text-sm font-medium mb-1">
-                  Color
-                </label>
-                <input
-                  id="color"
-                  type="text"
-                  {...register('color')}
-                  className="w-full px-3 py-2 border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
-                  placeholder="e.g., Red, Blue, Silver"
-                />
-                {errors.color && (
-                  <p className="mt-1 text-sm text-destructive">{errors.color.message}</p>
-                )}
-              </div>
-            </div>
+            <CarFormFields register={register} errors={errors} />
 
             {error && (
               <div className="mt-4 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md p-3">
