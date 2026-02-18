@@ -1,24 +1,24 @@
 {
-    "name": "car-doctor",
-    "version": "1.0.0",
-    "private": true,
-    "description": "Full stack monorepo for Car Doctor",
-    "scripts": {
-        "dev": "turbo run dev",
-        "dev:mobile": "turbo run dev --filter=mobile",
-        "test:backend": "pnpm --filter @car-doctor/backend test",
-        "build": "turbo run build",
-        "test": "turbo run test",
-        "lint": "turbo run lint",
-        "format": "prettier --write .",
-        "clean": "turbo run clean && pnpm store prune"
-    },
-    "devDependencies": {
-        "turbo": "^2.8.9"
-    },
-    "packageManager": "pnpm@8.15.0",
-    "engines": {
-        "node": ">=22.0.0",
-        "pnpm": ">=8.0.0"
-    }
+  "name": "car-doctor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full stack monorepo for Car Doctor",
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:mobile": "turbo run dev --filter=mobile",
+    "test:backend": "pnpm --filter @car-doctor/backend test",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "format": "prettier --write .",
+    "clean": "turbo run clean && pnpm store prune"
+  },
+  "devDependencies": {
+    "turbo": "^2.8.9"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=8.0.0"
+  }
 }
