@@ -91,8 +91,8 @@ const CarDetail = () => {
             <div className="p-3 rounded-full bg-primary/10">
               <CarIcon className="h-8 w-8 text-primary" />
             </div>
-            <div>
-              <h1 className="text-3xl font-bold">
+            <div className="flex flex-row items-start gap-4">
+              <h1 className="text-xl font-bold">
                 {car.brand} {car.model}
               </h1>
               <div className="flex items-center gap-4 text-sm mt-2">
@@ -176,9 +176,6 @@ const CarDetail = () => {
                   key={record._id}
                   className="relative pl-8 pb-8 border-l-2 border-border last:pb-0 last:border-l-0"
                 >
-                  {/* Timeline dot */}
-                  <div className="absolute -left-2.25 top-0 w-4 h-4 rounded-full bg-primary border-4 border-background" />
-
                   <div className="bg-muted/50 rounded-lg p-4">
                     <div className="flex items-start justify-between mb-2">
                       <div>
