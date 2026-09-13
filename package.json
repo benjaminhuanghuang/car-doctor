@@ -11,6 +11,7 @@
     "test": "turbo run test",
     "lint": "turbo run lint",
     "format": "prettier --write .",
+    "update-commit-hash": "sh scripts/update_commit_hash.sh",
     "clean": "turbo run clean && pnpm store prune"
   },
   "devDependencies": {
