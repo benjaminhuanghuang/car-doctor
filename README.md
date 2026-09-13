@@ -1,4 +1,4 @@
-# car-doctor
+# Car-doctor
 
 ## Features and tech stacks
 
