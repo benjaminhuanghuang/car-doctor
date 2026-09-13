@@ -51,16 +51,13 @@ const Profile = () => {
 
   const handleSave = async (e: React.SubmitEvent) => {
     e.preventDefault();
-    let profilePic = imagePreview;
-    // If a new image file is selected
-    if (imageFile) {
-      const base64 = imagePreview.startsWith('blob:')
+    // Resolve the picture to persist: a newly picked file becomes a data URL,
+    // an unchanged preview is kept, and no file clears it.
+    const profilePic = imageFile
+      ? imagePreview.startsWith('blob:')
         ? await fileToDataUrl(imageFile)
-        : imagePreview;
-      profilePic = base64;
-    } else {
-      profilePic = '';
-    }
+        : imagePreview
+      : '';
     mutation.mutate({ profilePic });
     updateProfile({
       profilePic: profilePic,

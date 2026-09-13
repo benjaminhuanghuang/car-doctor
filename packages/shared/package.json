@@ -16,17 +16,18 @@
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json && node scripts/write-dist-types.mjs",
+    "build": "rm -rf dist && tsc -p tsconfig.esm.json && esbuild src/index.ts --bundle --packages=external --format=cjs --platform=node --outfile=dist/cjs/index.js && node scripts/write-dist-types.mjs",
     "dev": "tsc -p tsconfig.esm.json --watch --preserveWatchOutput",
     "lint": "eslint .",
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "zod": "^4.3.6"
+    "zod": "^4.6.4"
   },
   "devDependencies": {
     "@car-doctor/config": "workspace:*",
-    "eslint": "^9.39.1",
-    "typescript": "^5.9.3"
+    "esbuild": "^0.28.2",
+    "eslint": "^10.10.0",
+    "typescript": "7.0.2"
   }
 }
