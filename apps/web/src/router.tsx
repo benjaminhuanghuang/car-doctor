@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router';
+import { createBrowserRouter, Outlet } from 'react-router';
 import RootLayout from '@/components/layout/RootLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AuthedRoute from '@/components/AuthedRoute';
@@ -15,15 +15,15 @@ import ChangePassword from './pages/ChangePassword';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <RootLayout />,
+    Component: RootLayout,
     children: [
       {
         path: '/',
-        element: <Home />,
+        Component: Home,
       },
       {
         path: '/about',
-        element: <About />,
+        Component: About,
       },
       {
         path: '/profile',
@@ -45,17 +45,13 @@ const router = createBrowserRouter([
         path: '/cars',
         element: (
           <ProtectedRoute>
-            <CarList />
+            <Outlet />
           </ProtectedRoute>
         ),
-      },
-      {
-        path: '/cars/:id',
-        element: (
-          <ProtectedRoute>
-            <CarDetail />
-          </ProtectedRoute>
-        ),
+        children: [
+          { index: true, Component: CarList },
+          { path: ':id', Component: CarDetail },
+        ],
       },
       {
         path: '*',
@@ -73,7 +69,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/register',
-    element: <Register />,
+    Component: Register,
   },
 ]);
 

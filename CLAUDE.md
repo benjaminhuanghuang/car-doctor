@@ -28,7 +28,7 @@ This is a Car maintenance management full stack application
 
 - **React 19** + **Vite 8** (rolldown) + **TypeScript**
 - **TailwindCSS 4** (`@tailwindcss/vite`) + **shadcn/ui** (`components/ui/`) + Radix + CVA + tailwind-merge/clsx
-- Routing: **react-router-dom 7**
+- Routing: **react-router 8** (import from `react-router`, not `react-router-dom`)
 - Data fetching: **TanStack Query 5**
 - Forms: **react-hook-form** + **Zod** (`@hookform/resolvers`)
 - State: Context (`AuthProvider`, `ThemeProvider`)
