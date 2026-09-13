@@ -16,6 +16,11 @@
   "devDependencies": {
     "turbo": "^2.10.12"
   },
+  "pnpm": {
+    "overrides": {
+      "expo": "57.0.22"
+    }
+  },
   "packageManager": "pnpm@12.4.1",
   "engines": {
     "node": ">=22.0.0",

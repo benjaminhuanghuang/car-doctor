@@ -16,8 +16,8 @@
     }
   },
   "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.esm.json && esbuild src/index.ts --bundle --packages=external --format=cjs --platform=node --outfile=dist/cjs/index.js && node scripts/write-dist-types.mjs",
-    "dev": "tsc -p tsconfig.esm.json --watch --preserveWatchOutput",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && esbuild src/index.ts --bundle --packages=external --format=cjs --platform=node --outfile=dist/cjs/index.js && node scripts/write-dist-types.mjs",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput",
     "lint": "eslint .",
     "clean": "rm -rf dist"
   },

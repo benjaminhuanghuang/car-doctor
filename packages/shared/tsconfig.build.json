@@ -1,0 +1,10 @@
+{
+  // Emits the ESM build (dist/esm/*.js, consumed by web/Vite) and the .d.ts type
+  // declarations shared by both the ESM and CJS entry points. The CJS build is
+  // produced separately by esbuild — see the "build" script in package.json.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "module": "ES2022",
+    "outDir": "./dist/esm"
+  }
+}

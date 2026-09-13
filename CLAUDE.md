@@ -8,10 +8,12 @@ This is a Car maintenance management full stack application
 
 ### Engineering / Monorepo
 
-- Package manager: **pnpm 8** (`packageManager: pnpm@8.15.0`), Node `>=22`
+- Package manager: **pnpm 12** (`packageManager: pnpm@12.4.1`), Node `>=22`. pnpm 12 gates package build scripts — approved ones are whitelisted under `allowBuilds` in `pnpm-workspace.yaml` (esbuild, unrs-resolver).
 - Build orchestration: **Turborepo** (`turbo.json`; `build` depends on `^build` and caches outputs)
+- **TypeScript 7** (native compiler) in backend/web/shared; **ESLint 10** (flat config) + `typescript-eslint`. Mobile's TS/ESLint versions are pinned by the Expo SDK instead (see below).
 - Style: **Prettier** (`.prettierrc.mjs`) + **Stylelint** (`.stylelintrc.mjs`) + per-package **ESLint**
 - Workspace: `apps/*`, `packages/*`
+- `pnpm.overrides.expo` in root `package.json` forces a single Expo version — web's `@react-three/fiber` has an optional `expo` peer that otherwise pins a stale Expo SDK graph.
 
 ### apps/backend (`@car-doctor/backend`)
 
@@ -24,7 +26,7 @@ This is a Car maintenance management full stack application
 
 ### apps/web (`car-doctor-web`)
 
-- **React 19** + **Vite 7** + **TypeScript**
+- **React 19** + **Vite 8** (rolldown) + **TypeScript 7**
 - **TailwindCSS 4** (`@tailwindcss/vite`) + **shadcn/ui** (`components/ui/`) + Radix + CVA + tailwind-merge/clsx
 - Routing: **react-router-dom 7**
 - Data fetching: **TanStack Query 5**
@@ -36,12 +38,14 @@ This is a Car maintenance management full stack application
 
 ### apps/mobile (`car-doctor-mobile`)
 
-- **React Native 0.81** + **Expo 54** + **expo-router** (file-based routing)
+- **React Native 0.86** + **Expo SDK 57** + **expo-router** (file-based routing)
+- Expo owns this app's dependency versions: change them with `expo install` / `expo install --fix` (never blind `npm latest`), and validate with `npx expo-doctor`. TS stays at Expo's pin (6.0.3), ESLint at `eslint-config-expo` — do not force the repo-wide TS 7 / ESLint 10 here.
+- expo-router 57 vendors its own react-navigation copy; import `PlatformPressable` / tab types from `expo-router/build/react-navigation/*` (see `components/haptic-tab.tsx`), not the standalone `@react-navigation/*`, to avoid type skew.
 
 ### packages
 
-- **`packages/shared` (`@car-doctor/shared`)** — canonical Zod schemas + inferred types shared by web and backend (`carSchema`, `loginSchema`/`registerSchema`/`changePasswordSchema`, `User`/`UserProfile`). Dual build via `tsc`: `dist/cjs` (backend `require`) + `dist/esm` (web/Vite bundling); the `development` export condition points at `src` so dev needs no prebuild. Consumers extend rather than fork (e.g. web `registerSchema.extend({ confirmPassword })`, backend `registerSchema.extend({ fullName })`).
-- **`packages/config` (`@car-doctor/config`)** — shared dev config consumed via subpath exports: `@car-doctor/config/tsconfig/base.json` (strict base every package extends), `@car-doctor/config/eslint/base` (flat preset for Node/TS packages) and `@car-doctor/config/eslint/react` (adds react-hooks / react-refresh + browser globals, with shadcn-`ui/**` and R3F `@ts-nocheck` exceptions). ESLint is standardized on v9 flat config + `typescript-eslint`. Mobile keeps its own `eslint-config-expo`.
+- **`packages/shared` (`@car-doctor/shared`)** — canonical Zod schemas + inferred types shared by web and backend (`carSchema`, `loginSchema`/`registerSchema`/`changePasswordSchema`, `User`/`UserProfile`). Dual build: `dist/esm` + `.d.ts` via `tsc` (bundler mode), `dist/cjs` via `esbuild` (TS 7 can't emit `module: commonjs`, so esbuild produces the CJS the backend `require`s); the `development` export condition points at `src` so dev needs no prebuild. Consumers extend rather than fork (e.g. web `registerSchema.extend({ confirmPassword })`, backend `registerSchema.extend({ fullName })`).
+- **`packages/config` (`@car-doctor/config`)** — shared dev config consumed via subpath exports: `@car-doctor/config/tsconfig/base.json` (strict base every package extends), `@car-doctor/config/eslint/base` (flat preset for Node/TS packages) and `@car-doctor/config/eslint/react` (adds react-hooks / react-refresh + browser globals, with shadcn-`ui/**` and R3F `@ts-nocheck` exceptions). ESLint is standardized on v10 flat config + `typescript-eslint`. Mobile keeps its own `eslint-config-expo`.
 
 ## Common Commands (repo root)
 
