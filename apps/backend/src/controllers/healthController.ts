@@ -5,7 +5,7 @@ export const getHealth = async (_req: Request, res: Response): Promise<void> => 
   try {
     const healthData = HealthService.checkHealth();
     res.status(200).json(healthData);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Internal server error' });
   }
 };

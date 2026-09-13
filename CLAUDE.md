@@ -1,6 +1,8 @@
 # CLAUDE.md
 
-Car Doctor — car maintenance management, pnpm + Turborepo monorepo.
+## Overview
+
+This is a Car maintenance management full stack application
 
 ## Tech Stack
 
@@ -37,7 +39,8 @@ Car Doctor — car maintenance management, pnpm + Turborepo monorepo.
 
 ### packages
 
-- `packages/shared`, `packages/config` — shared code/config across packages
+- **`packages/shared` (`@car-doctor/shared`)** — canonical Zod schemas + inferred types shared by web and backend (`carSchema`, `loginSchema`/`registerSchema`/`changePasswordSchema`, `User`/`UserProfile`). Dual build via `tsc`: `dist/cjs` (backend `require`) + `dist/esm` (web/Vite bundling); the `development` export condition points at `src` so dev needs no prebuild. Consumers extend rather than fork (e.g. web `registerSchema.extend({ confirmPassword })`, backend `registerSchema.extend({ fullName })`).
+- **`packages/config` (`@car-doctor/config`)** — shared dev config consumed via subpath exports: `@car-doctor/config/tsconfig/base.json` (strict base every package extends), `@car-doctor/config/eslint/base` (flat preset for Node/TS packages) and `@car-doctor/config/eslint/react` (adds react-hooks / react-refresh + browser globals, with shadcn-`ui/**` and R3F `@ts-nocheck` exceptions). ESLint is standardized on v9 flat config + `typescript-eslint`. Mobile keeps its own `eslint-config-expo`.
 
 ## Common Commands (repo root)
 
@@ -53,12 +56,14 @@ pnpm format           # prettier format across repo
 
 ## Best Practices
 
-- **End-to-end types + validation**: For new APIs, validate inputs on the backend with a Zod schema through the `validation` middleware, and reuse an isomorphic Zod schema on the web forms (`web/src/lib/schemas.ts`). Prefer placing schemas in `packages/shared` so front and back end share them.
+- **End-to-end types + validation**: Define the canonical Zod schema once in `packages/shared`; the backend feeds it to the `validation` middleware and the web forms use it via `zodResolver`. Derive types with `z.infer` — do not hand-write parallel interfaces. Add client- or server-only fields by `.extend()`ing the shared schema, never by copying it.
 - **Backend layering**: Routes only map to handlers; business logic goes in controllers/services — no logic inside routes. `throw` errors and let `errorHandler` format the response; do not hand-write try/catch responses per controller.
 - **Web data layer**: All server data goes through TanStack Query (`useQuery`/`useMutation`); after a mutation `invalidateQueries` instead of manually mutating local state. Centralize API calls in `web/src/lib/api.ts`.
 - **UI components**: Reuse the shadcn components in `components/ui/` first; build conditional class names with `cn()` (`lib/utils.ts`, clsx + tailwind-merge) rather than string concatenation.
 - **Auth**: Wrap protected routes with `ProtectedRoute`/`AuthedRoute`; token and user state are managed by `AuthProvider`.
-- **TypeScript**: strict across the repo; avoid `any`; put shared types in `packages/shared`.
+- **TypeScript**: strict across the repo; avoid `any`; put shared types in `packages/shared`. Each package's `tsconfig.json` extends `@car-doctor/config/tsconfig/base.json` — add compiler options there, not per package.
+- **Error handling**: in catch blocks type the error as `unknown` (the default — do not annotate `: any`) and read it through `getErrorMessage` / `hasErrorCode` in `backend/src/utils/getErrorMessage.ts`.
+- **ESLint**: packages consume the presets from `@car-doctor/config`; don't fork rule sets per package. Suppress a rule locally only with a documented, narrowly-scoped override.
 - **Before committing**: run `pnpm lint` + `pnpm test`, and `pnpm format` for consistent style.
 
 ## Deployment (Render)

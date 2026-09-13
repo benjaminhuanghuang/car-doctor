@@ -1,13 +1,9 @@
 import {
   Sparkles,
-  Target,
   Wrench,
   Calendar,
   TrendingUp,
-  Shield,
-  Zap,
   Users,
-  Brain,
   Car,
   MessageCircle,
   Clock,

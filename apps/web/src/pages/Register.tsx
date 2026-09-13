@@ -1,16 +1,15 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { registerSchema as baseRegisterSchema } from '@car-doctor/shared';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { authApi } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 
-const registerSchema = z
-  .object({
-    email: z.email('Invalid email address'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
+const registerSchema = baseRegisterSchema
+  .extend({
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {

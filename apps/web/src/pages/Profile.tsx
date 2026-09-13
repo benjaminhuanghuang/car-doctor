@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import { userApi } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { X } from 'lucide-react';
@@ -9,16 +9,19 @@ const Profile = () => {
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   // Local state for image preview and file handling
-  const [imagePreview, setImagePreview] = useState<string>('');
+  const [imagePreview, setImagePreview] = useState<string>(user?.profilePic || '');
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [email, setEmail] = useState<string>('');
+  const [email, setEmail] = useState<string>(user?.email || '');
 
-  useEffect(() => {
-    if (user?.profilePic) {
-      setImagePreview(user.profilePic);
-    }
+  // Re-sync the editable fields when the authenticated user changes. Setting
+  // state during render (guarded by a previous-value check) is the React-endorsed
+  // alternative to doing this in an effect.
+  const [prevUser, setPrevUser] = useState(user);
+  if (user !== prevUser) {
+    setPrevUser(user);
+    setImagePreview(user?.profilePic || '');
     setEmail(user?.email || '');
-  }, [user]);
+  }
 
   const isDirty = useMemo(() => {
     const current = imagePreview ?? null;

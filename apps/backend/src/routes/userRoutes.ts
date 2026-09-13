@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { getProfile, updateProfile, changePassword } from '../controllers/userController';
 import { authenticateToken } from '../middleware/auth';
 import { validateBody } from '../middleware/validation';
+import { changePasswordSchema } from '@car-doctor/shared';
 import z from 'zod';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -39,11 +40,6 @@ const updateProfileSchema = z.object({
     )
     .or(z.literal('')) // Allow empty string to clear profile picture
     .optional(),
-});
-
-const changePasswordSchema = z.object({
-  currentPassword: z.string().min(1, 'Current password is required'),
-  newPassword: z.string().min(6, 'New password must be at least 6 characters'),
 });
 
 // Routes

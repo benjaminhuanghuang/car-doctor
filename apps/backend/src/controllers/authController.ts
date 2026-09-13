@@ -1,6 +1,8 @@
+import { getErrorMessage } from '../utils/getErrorMessage';
 import bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
 import { z } from 'zod';
+import { loginSchema, registerSchema as baseRegisterSchema } from '@car-doctor/shared';
 import { User } from '../models/User';
 import { generateToken } from '../utils/jwt';
 
@@ -12,15 +14,8 @@ const toPublicUser = (user: { _id: unknown; email: string; profilePic?: string }
   };
 };
 
-const registerSchema = z.object({
-  email: z.email(),
-  password: z.string().min(6),
+const registerSchema = baseRegisterSchema.extend({
   fullName: z.string().min(1).optional(),
-});
-
-const loginSchema = z.object({
-  email: z.email(),
-  password: z.string().min(1),
 });
 
 // User registration
@@ -66,11 +61,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       token,
       user: toPublicUser(user),
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Register error:', error);
     res.status(500).json({
       error: 'Failed to create user',
-      details: error.message,
+      details: getErrorMessage(error),
     });
   }
 };
@@ -111,11 +106,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       token,
       user: toPublicUser(user),
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({
       error: 'Login failed',
-      details: error.message,
+      details: getErrorMessage(error),
     });
   }
 };

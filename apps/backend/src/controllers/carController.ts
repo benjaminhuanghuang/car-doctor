@@ -1,3 +1,4 @@
+import { getErrorMessage, hasErrorCode } from '../utils/getErrorMessage';
 import { Response } from 'express';
 import { Car } from '../models/Car';
 import { AuthenticatedRequest } from '../middleware/auth';
@@ -12,11 +13,11 @@ export const getCars = async (req: AuthenticatedRequest, res: Response): Promise
       count: cars.length,
       cars,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get cars error:', error);
     res.status(500).json({
       error: 'Failed to get cars',
-      details: error.message,
+      details: getErrorMessage(error),
     });
   }
 };
@@ -40,9 +41,9 @@ export const createCar = async (req: AuthenticatedRequest, res: Response): Promi
       message: 'Car created successfully',
       car,
     });
-  } catch (error: any) {
+  } catch (error) {
     // Handle duplicate license plate error
-    if (error.code === 11000) {
+    if (hasErrorCode(error, 11000)) {
       res.status(400).json({ error: 'License plate already exists' });
       return;
     }
@@ -50,7 +51,7 @@ export const createCar = async (req: AuthenticatedRequest, res: Response): Promi
     console.error('Create car error:', error);
     res.status(500).json({
       error: 'Failed to create car',
-      details: error.message,
+      details: getErrorMessage(error),
     });
   }
 };
@@ -69,11 +70,11 @@ export const getCarById = async (req: AuthenticatedRequest, res: Response): Prom
     }
 
     res.json({ car });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get car error:', error);
     res.status(500).json({
       error: 'Failed to get car',
-      details: error.message,
+      details: getErrorMessage(error),
     });
   }
 };
@@ -85,7 +86,7 @@ export const updateCar = async (req: AuthenticatedRequest, res: Response): Promi
     const { id } = req.params;
 
     // Map carModel to model for the schema
-    const updateData: any = { ...req.body };
+    const updateData: Record<string, unknown> = { ...req.body };
     if (updateData.carModel) {
       updateData.model = updateData.carModel;
       delete updateData.carModel;
@@ -105,11 +106,11 @@ export const updateCar = async (req: AuthenticatedRequest, res: Response): Promi
       message: 'Car updated successfully',
       car,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Update car error:', error);
     res.status(500).json({
       error: 'Failed to update car',
-      details: error.message,
+      details: getErrorMessage(error),
     });
   }
 };
@@ -128,11 +129,11 @@ export const deleteCar = async (req: AuthenticatedRequest, res: Response): Promi
     }
 
     res.json({ message: 'Car deleted successfully' });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Delete car error:', error);
     res.status(500).json({
       error: 'Failed to delete car',
-      details: error.message,
+      details: getErrorMessage(error),
     });
   }
 };

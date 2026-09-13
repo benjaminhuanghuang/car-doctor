@@ -5,14 +5,15 @@
   "description": "Backend API server for Car Doctor",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "tsx --watch src/server.ts",
+    "dev": "NODE_OPTIONS=--conditions=development tsx --watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "lint": "eslint src --ext .ts",
+    "lint": "eslint .",
     "clean": "rm -rf dist",
     "test": "vitest run"
   },
   "dependencies": {
+    "@car-doctor/shared": "workspace:*",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
@@ -22,14 +23,13 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@car-doctor/config": "workspace:*",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/multer": "^2.0.0",
     "@types/node": "^25.2.3",
     "@types/supertest": "^6.0.3",
-    "@typescript-eslint/eslint-plugin": "^8.56.0",
-    "@typescript-eslint/parser": "^8.56.0",
-    "eslint": "^10.0.0",
+    "eslint": "^9.39.1",
     "supertest": "^7.2.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",

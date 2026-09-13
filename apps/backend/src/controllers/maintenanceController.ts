@@ -1,3 +1,4 @@
+import { getErrorMessage } from '../utils/getErrorMessage';
 import { Response } from 'express';
 import { Maintenance } from '../models/Maintenance';
 import { Car } from '../models/Car';
@@ -26,11 +27,11 @@ export const getMaintenance = async (req: AuthenticatedRequest, res: Response): 
     const records = await Maintenance.find(filter).sort({ date: -1 });
 
     res.json({ count: records.length, records });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get maintenance error:', error);
     res.status(500).json({
       error: 'Failed to get maintenance records',
-      details: error.message,
+      details: getErrorMessage(error),
     });
   }
 };
@@ -90,11 +91,11 @@ export const createMaintenance = async (
       message: 'Maintenance record created successfully',
       record,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Create maintenance error:', error);
     res.status(500).json({
       error: 'Failed to create maintenance record',
-      details: error.message,
+      details: getErrorMessage(error),
     });
   }
 };
@@ -120,11 +121,11 @@ export const getMaintenanceById = async (
     }
 
     res.json({ record });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get maintenance record error:', error);
     res.status(500).json({
       error: 'Failed to get maintenance record',
-      details: error.message,
+      details: getErrorMessage(error),
     });
   }
 };
@@ -157,11 +158,11 @@ export const updateMaintenance = async (
       message: 'Maintenance record updated successfully',
       record,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Update maintenance error:', error);
     res.status(500).json({
       error: 'Failed to update maintenance record',
-      details: error.message,
+      details: getErrorMessage(error),
     });
   }
 };
@@ -187,11 +188,11 @@ export const deleteMaintenance = async (
     }
 
     res.json({ message: 'Maintenance record deleted successfully' });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Delete maintenance error:', error);
     res.status(500).json({
       error: 'Failed to delete maintenance record',
-      details: error.message,
+      details: getErrorMessage(error),
     });
   }
 };

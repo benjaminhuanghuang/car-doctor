@@ -1,3 +1,4 @@
+import { getErrorMessage } from '../utils/getErrorMessage';
 import type { Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { AuthenticatedRequest } from '../middleware/auth';
@@ -23,11 +24,11 @@ export const getProfile = async (req: AuthenticatedRequest, res: Response): Prom
     }
 
     res.json({ user: toPublicUser(user) });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get profile error:', error);
     res.status(500).json({
       error: 'Failed to get profile',
-      details: error.message,
+      details: getErrorMessage(error),
     });
   }
 };

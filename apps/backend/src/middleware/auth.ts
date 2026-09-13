@@ -22,7 +22,7 @@ export const authenticateToken = async (
     const payload = await verifyToken(token);
     req.user = payload;
     next();
-  } catch (err) {
+  } catch {
     res.status(403).json({ error: 'Forbidden, invalid or expired token' });
     return;
   }

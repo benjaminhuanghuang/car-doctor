@@ -1,6 +1,1 @@
-export interface User {
-  email: string;
-  profilePic?: string;
-}
-
-export type UserProfile = Partial<Pick<User, 'profilePic'>>;
+export type { User, UserProfile } from '@car-doctor/shared';
