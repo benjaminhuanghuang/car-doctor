@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router';
 import RootLayout from '@/components/layout/RootLayout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AuthedRoute from '@/components/AuthedRoute';

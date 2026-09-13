@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { carApi, type Car } from '@/lib/api';
 import { Car as CarIcon, Plus, Calendar, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import Loader from '@/components/Loader';
 import ErrorDisplay from '@/components/ErrorDisplay';
 import { AddCarDialog } from '@/components/AddCarDialog';

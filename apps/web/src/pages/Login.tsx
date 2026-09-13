@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginInput as LoginFormData } from '@car-doctor/shared';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { authApi } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';

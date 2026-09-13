@@ -1,6 +1,6 @@
 import { Car3D } from '@/components/Car3D';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Sparkles, Wrench, Calendar, TrendingUp } from 'lucide-react';
 
 const Home = () => {

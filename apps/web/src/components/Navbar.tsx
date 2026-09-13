@@ -1,6 +1,6 @@
 import { Box } from 'lucide-react';
 import { Button } from './ui/button';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router';
 import { ThemeToggle } from './ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
 
