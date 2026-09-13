@@ -10,7 +10,7 @@ This is a Car maintenance management full stack application
 
 - Package manager: **pnpm 12** (`packageManager: pnpm@12.4.1`), Node `>=22`. pnpm 12 gates package build scripts — approved ones are whitelisted under `allowBuilds` in `pnpm-workspace.yaml` (esbuild, unrs-resolver).
 - Build orchestration: **Turborepo** (`turbo.json`; `build` depends on `^build` and caches outputs)
-- **TypeScript 7** (native compiler) in backend/web/shared; **ESLint 10** (flat config) + `typescript-eslint`. Mobile's TS/ESLint versions are pinned by the Expo SDK instead (see below).
+- **TypeScript 6.0.3** in backend/web/shared; **ESLint 10** (flat config) + `typescript-eslint`. Mobile's TS/ESLint versions are pinned by the Expo SDK instead (see below). Do **not** move to `typescript@7`: the npm 7.x is the native (Go) preview that ships only `tsc` — no `tsserver.js` and no compiler API — so the VS Code language service and `typescript-eslint` silently fall back to another TS and emit `node10` / `baseUrl` deprecation errors. Stay on 6.0.3 (the latest with full editor + API support) until the native toolchain stabilizes.
 - Style: **Prettier** (`.prettierrc.mjs`) + **Stylelint** (`.stylelintrc.mjs`) + per-package **ESLint**
 - Workspace: `apps/*`, `packages/*`
 - `pnpm.overrides.expo` in root `package.json` forces a single Expo version — web's `@react-three/fiber` has an optional `expo` peer that otherwise pins a stale Expo SDK graph.
@@ -26,7 +26,7 @@ This is a Car maintenance management full stack application
 
 ### apps/web (`car-doctor-web`)
 
-- **React 19** + **Vite 8** (rolldown) + **TypeScript 7**
+- **React 19** + **Vite 8** (rolldown) + **TypeScript**
 - **TailwindCSS 4** (`@tailwindcss/vite`) + **shadcn/ui** (`components/ui/`) + Radix + CVA + tailwind-merge/clsx
 - Routing: **react-router-dom 7**
 - Data fetching: **TanStack Query 5**
@@ -44,7 +44,7 @@ This is a Car maintenance management full stack application
 
 ### packages
 
-- **`packages/shared` (`@car-doctor/shared`)** — canonical Zod schemas + inferred types shared by web and backend (`carSchema`, `loginSchema`/`registerSchema`/`changePasswordSchema`, `User`/`UserProfile`). Dual build: `dist/esm` + `.d.ts` via `tsc` (bundler mode), `dist/cjs` via `esbuild` (TS 7 can't emit `module: commonjs`, so esbuild produces the CJS the backend `require`s); the `development` export condition points at `src` so dev needs no prebuild. Consumers extend rather than fork (e.g. web `registerSchema.extend({ confirmPassword })`, backend `registerSchema.extend({ fullName })`).
+- **`packages/shared` (`@car-doctor/shared`)** — canonical Zod schemas + inferred types shared by web and backend (`carSchema`, `loginSchema`/`registerSchema`/`changePasswordSchema`, `User`/`UserProfile`). Dual build: `dist/esm` + `.d.ts` via `tsc` (`tsconfig.build.json`, bundler mode), `dist/cjs` via `esbuild` (the CJS the backend `require`s); the `development` export condition points at `src` so dev needs no prebuild. Consumers extend rather than fork (e.g. web `registerSchema.extend({ confirmPassword })`, backend `registerSchema.extend({ fullName })`).
 - **`packages/config` (`@car-doctor/config`)** — shared dev config consumed via subpath exports: `@car-doctor/config/tsconfig/base.json` (strict base every package extends), `@car-doctor/config/eslint/base` (flat preset for Node/TS packages) and `@car-doctor/config/eslint/react` (adds react-hooks / react-refresh + browser globals, with shadcn-`ui/**` and R3F `@ts-nocheck` exceptions). ESLint is standardized on v10 flat config + `typescript-eslint`. Mobile keeps its own `eslint-config-expo`.
 
 ## Common Commands (repo root)
