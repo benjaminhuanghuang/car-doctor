@@ -34,7 +34,7 @@ This is a Car maintenance management full stack application
 - State: Context (`AuthProvider`, `ThemeProvider`)
 - 3D: **three** + **@react-three/fiber** + **drei**
 - Icons: lucide-react
-- Testing: **Vitest** (jsdom) + **React Testing Library** + **jest-dom**; config in `vitest.config.ts`, matchers/cleanup in `src/test/setup.ts`
+- Testing: **Vitest** (jsdom) + **React Testing Library** + **jest-dom** for units (`vitest.config.ts`, setup in `src/test/setup.ts`); **Playwright** for e2e in `apps/web/e2e/` (`playwright.config.ts`, boots the Vite dev server, own `tsconfig.e2e.json`, run with `pnpm --filter car-doctor-web e2e`)
 
 ### apps/mobile (`car-doctor-mobile`)
 
@@ -69,7 +69,7 @@ pnpm format           # prettier format across repo
 - **TypeScript**: strict across the repo; avoid `any`; put shared types in `packages/shared`. Each package's `tsconfig.json` extends `@car-doctor/config/tsconfig/base.json` — add compiler options there, not per package.
 - **Error handling**: in catch blocks type the error as `unknown` (the default — do not annotate `: any`) and read it through `getErrorMessage` / `hasErrorCode` in `backend/src/utils/getErrorMessage.ts`.
 - **ESLint**: packages consume the presets from `@car-doctor/config`; don't fork rule sets per package. Suppress a rule locally only with a documented, narrowly-scoped override.
-- **Testing**: web uses Vitest + RTL — test files live next to source as `*.test.ts(x)` and are excluded from the build (`tsconfig.app.json`); prefer RTL queries by role/text over implementation details. Backend uses Vitest + supertest and needs a local MongoDB on `27017` (its `globalSetup` connects and clears collections).
+- **Testing**: web unit tests use Vitest + RTL — files live next to source as `*.test.ts(x)`, excluded from build (`tsconfig.app.json`); prefer RTL queries by role/text. Web e2e uses Playwright in `apps/web/e2e/*.spec.ts` (separate from unit tests and from the `src` build); e2e is its own turbo task (`cache: false`), not part of `pnpm test`. Backend uses Vitest + supertest and needs a local MongoDB on `27017` (its `globalSetup` connects and clears collections).
 - **Before committing**: run `pnpm lint` + `pnpm test`, and `pnpm format` for consistent style.
 
 ## Deployment (Render)

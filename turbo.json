@@ -26,6 +26,12 @@
         "coverage/**"
       ]
     },
+    "e2e": {
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false
+    },
     "lint": {
       "outputs": []
     },

@@ -1,0 +1,11 @@
+{
+  // Editor/type-check config for the Playwright e2e suite (kept out of the app build).
+  "extends": "@car-doctor/config/tsconfig/base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["e2e", "playwright.config.ts"]
+}

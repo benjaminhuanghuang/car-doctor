@@ -18,5 +18,11 @@ storybook-static
 # Testing
 coverage
 
+# Playwright
+playwright-report
+test-results
+blob-report
+.playwright
+
 # Turbo
 .turbo
