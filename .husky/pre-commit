@@ -1,6 +1,6 @@
 # 1) Secret scan: block the commit if a secret is found in the staged diff.
 if command -v gitleaks >/dev/null 2>&1; then
-  gitleaks git --staged --redact --verbose || {
+  gitleaks git --staged --redact --no-banner || {
     echo ""
     echo "🛑 gitleaks found a potential secret in your staged changes (see above)."
     echo "   Remove it, or add a reviewed exception to .gitleaks.toml, then re-commit."
