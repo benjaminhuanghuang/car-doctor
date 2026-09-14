@@ -6,7 +6,6 @@ bundle.js.*
 *-lock.js
 *-lock.json
 .env
-pnpm-lock.yaml
 coverage
 dist
 
