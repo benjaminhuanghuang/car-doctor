@@ -28,7 +28,9 @@ URL: <https://car-doctor-vcgx.onrender.com>
 
 ### Settings
 
+- Root Directory: blank (Render will run command at root)
 - Build Command: pnpm exec turbo run build --filter=@car-doctor/backend
+- Start Command: pnpm --filter @car-doctor/backend start
 
 ### Environment
 
