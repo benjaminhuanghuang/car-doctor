@@ -1,0 +1,16 @@
+# 1) Secret scan: block the commit if a secret is found in the staged diff.
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks git --staged --redact --verbose || {
+    echo ""
+    echo "🛑 gitleaks found a potential secret in your staged changes (see above)."
+    echo "   Remove it, or add a reviewed exception to .gitleaks.toml, then re-commit."
+    exit 1
+  }
+else
+  echo "🛑 gitleaks is not installed — secret scanning is required before committing."
+  echo "   Install it with:  brew install gitleaks"
+  exit 1
+fi
+
+# 2) Lint & format only the staged files.
+pnpm exec lint-staged

@@ -12,9 +12,13 @@
     "lint": "turbo run lint",
     "format": "prettier --write .",
     "update-commit-hash": "sh scripts/update_commit_hash.sh",
-    "clean": "turbo run clean && pnpm store prune"
+    "clean": "turbo run clean && pnpm store prune",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.5.1",
+    "prettier": "^3.9.6",
     "turbo": "^2.10.12"
   },
   "pnpm": {

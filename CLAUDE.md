@@ -13,6 +13,7 @@ This is a Car maintenance management full stack application
 - **TypeScript 6.0.3** in backend/web/shared; **ESLint 10** (flat config) + `typescript-eslint`. Mobile's TS/ESLint versions are pinned by the Expo SDK instead (see below). Do **not** move to `typescript@7`: the npm 7.x is the native (Go) preview that ships only `tsc` — no `tsserver.js` and no compiler API — so the VS Code language service and `typescript-eslint` silently fall back to another TS and emit `node10` / `baseUrl` deprecation errors. Stay on 6.0.3 (the latest with full editor + API support) until the native toolchain stabilizes.
 - Style: **Prettier** (`.prettierrc.mjs`) + **Stylelint** (`.stylelintrc.mjs`) + per-package **ESLint**
 - Workspace: `apps/*`, `packages/*`
+- **Git hooks (Husky)**: `.husky/pre-commit` runs **gitleaks** (`gitleaks git --staged`, blocks commits containing secrets — requires the `gitleaks` binary, `brew install gitleaks`) then **lint-staged**. lint-staged config is `lint-staged.config.mjs`: ESLint `--fix` per package (flat config resolves from each package's cwd via `pnpm --filter … exec`), Prettier on the rest. The hook needs `pnpm` on PATH (Corepack).
 - `pnpm.overrides.expo` in root `package.json` forces a single Expo version — web's `@react-three/fiber` has an optional `expo` peer that otherwise pins a stale Expo SDK graph.
 
 ### apps/backend (`@car-doctor/backend`)
