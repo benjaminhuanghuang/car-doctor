@@ -17,29 +17,32 @@ async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise
     headers.append('Authorization', `Bearer ${token}`);
   }
 
+  let response: Response;
   try {
-    const response = await fetch(`${API_URL}${endpoint}`, {
+    response = await fetch(`${API_URL}${endpoint}`, {
       ...options,
       headers,
     });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return {
-        error: data.error || `HTTP error! status: ${response.status}`,
-        message: data.message,
-        details: data.details,
-      };
-    }
-
-    return { data };
   } catch (error) {
-    console.error('API Error:', error);
+    // fetch rejects only on network-level failures (server down, offline, CORS, DNS).
+    console.error('API network error:', error);
     return {
-      error: error instanceof Error ? error.message : 'An error occurred',
+      error: 'Unable to reach the server. Please check your connection and try again.',
     };
   }
+
+  // Body may be empty or non-JSON (e.g. a 500 HTML page); don't let that mask the status.
+  const data = await response.json().catch(() => ({}) as ApiResponse<T>);
+
+  if (!response.ok) {
+    return {
+      error: data.error || `Request failed (${response.status}). Please try again.`,
+      message: data.message,
+      details: data.details,
+    };
+  }
+
+  return { data };
 }
 
 // Auth API
