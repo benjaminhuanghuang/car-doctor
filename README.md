@@ -14,13 +14,6 @@
 
 - Monorepo + pnpm
 
-## Deployment
-
-### Backend
-
-<https://dashboard.render.com/>
-<https://car-doctor-vcgx.onrender.com>
-
-## Web
+## Web URL
 
 <https://car-doctor-web.onrender.com>
